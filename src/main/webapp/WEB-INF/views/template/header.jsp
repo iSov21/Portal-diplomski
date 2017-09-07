@@ -40,6 +40,7 @@
 			<a class="navbar-brand" href="${pageContext.request.contextPath}/login">Prijava</a>
 		</security:authorize>
 		<a class="navbar-brand" href="${pageContext.request.contextPath}/post/search">Pretraži oglase</a>
+		<a class="navbar-brand" href="${pageContext.request.contextPath}/post/pagList?page=1">Paginacija</a>
 	</nav>
 </header>
 

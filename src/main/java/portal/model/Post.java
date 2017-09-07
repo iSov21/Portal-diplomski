@@ -22,6 +22,7 @@ public class Post {
 	private Long id;
 	private String username;		
 	private Category category;
+	private String city;
 	private String title;
 	private String text;	
 	private Date created;
@@ -53,6 +54,12 @@ public class Post {
 	
 	public void setCategory(Category category) {
 		this.category = category;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
 	}
 	public String getTitle() {
 		return title;

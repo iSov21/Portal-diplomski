@@ -3,6 +3,7 @@ package portal.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,8 +28,6 @@ public class PostController {
 	@RequestMapping(value="/list", method = RequestMethod.GET)
 	public String list(Model model){
 		List<Post> posts = postService.findAllPosts();
-//		PagedListHolder<Post> pagedList = new PagedListHolder<>(posts);
-// https://stackoverflow.com/questions/31883643/how-do-i-add-simple-pagination-for-spring-mvc		
 		model.addAttribute("list", posts );
 		return "postList";
 	}
@@ -80,6 +79,28 @@ public class PostController {
 		Category categoryWithPosts = categoryService.findById(category.getId());
 		model.addAttribute("list", categoryWithPosts.getPosts() );
 		return "postList";
+	}
+	
+	
+	@RequestMapping(value="/pagList", method = RequestMethod.GET)
+	public String pagList(Model model, @RequestParam(required = false) Integer page){
+		List<Post> posts = postService.findAllPosts();
+		PagedListHolder<Post> pagedListHolder = new PagedListHolder<>(posts);
+		pagedListHolder.setPageSize(3);
+		model.addAttribute("maxPages", pagedListHolder.getPageCount() );
+		
+		if(page==null || page < 1 || page > pagedListHolder.getPageCount()) {
+			pagedListHolder.setPage(0);
+			model.addAttribute("list", pagedListHolder.getPageList());
+		}
+		else if(page <= pagedListHolder.getPageCount()) {
+            pagedListHolder.setPage(page-1);
+            model.addAttribute("list", pagedListHolder.getPageList());
+        }
+		model.addAttribute("page", page );
+		
+		return "paginatedPostList";
+		// https://stackoverflow.com/questions/31883643/how-do-i-add-simple-pagination-for-spring-mvc	
 	}
 	
 }

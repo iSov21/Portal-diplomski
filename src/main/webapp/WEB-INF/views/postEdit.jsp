@@ -25,6 +25,11 @@
 		</div>
 		
 		<div class="input-group">
+			<label class="input-group-addon" for="city"><i class="fa fa-user"></i></label>
+			<form:input id="city" name="city" path="city" type="text" placeholder="grad" class="form-control"/><br>
+		</div>
+		
+		<div class="input-group">
 			<label class="input-group-addon" for="title"><i class="fa fa-clone"></i></label> 
 			<form:input id="title" name="title" path="title" type="text" placeholder="naslov"/><br>
 		</div>
