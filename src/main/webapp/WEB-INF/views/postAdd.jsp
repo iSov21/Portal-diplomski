@@ -14,8 +14,7 @@
 			<form:input id="id" name="id" path="id" type="text" placeholder="id" class="form-control"/><br>
 		</div>
 		
-		
-		
+				
 <%-- 	<div class="input-group">
 			<label class="input-group-addon" for="username"><i class="fa fa-user"></i></label>
 			<form:input readonly="true" id="username" name="username" path="username" type="text" placeholder="korisničko ime" class="form-control" 
@@ -27,21 +26,25 @@
 			<label class="input-group-addon" for="username"><i class="fa fa-user"></i></label>
 			<form:input id="username" name="username" path="username" type="text" placeholder="korisničko ime" class="form-control"/><br>
 		</div>
+		<form:errors path="username" cssClass="error" style="color: #FF0000"/>
 		
 		<div class="input-group">
 			<label class="input-group-addon" for="category"><i class="fa fa-clone"></i></label> 
 			<form:select id="category" name="category" path="category" items="${category}" itemLabel="name" itemValue="id"/><br>
 		</div>
 		
+		
 		<div class="input-group">
 			<label class="input-group-addon" for="city"><i class="fa fa-user"></i></label>
 			<form:input id="city" name="city" path="city" type="text" placeholder="grad" class="form-control"/><br>
 		</div>
+		<form:errors path="city" cssClass="error" style="color: #FF0000"/>
 		
 		<div class="input-group">
 			<label class="input-group-addon" for="title"><i class="fa fa-clone"></i></label> 
 			<form:input id="title" name="title" path="title" type="text" placeholder="naslov"/><br>
 		</div>
+		<form:errors path="title" cssClass="error" style="color: #FF0000"/>
 		
 		<div class="input-group">
 			<label class="input-group-addon" for="text"><i class="fa fa-align-center "></i></label> 

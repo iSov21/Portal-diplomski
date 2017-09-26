@@ -23,6 +23,8 @@
     
     <!-- JQuery -->
 	<script type="text/javascript" src="<c:url value="/resources/js/jquery-3.2.1.min.js" />"></script>
+	
+	<script type="text/javascript" src="<c:url value="/resources/js/bootstrap.min.js" />"></script>
 </head>
 
 
@@ -41,6 +43,11 @@
 		</security:authorize>
 		<a class="navbar-brand" href="${pageContext.request.contextPath}/post/search">Pretraži oglase</a>
 		<a class="navbar-brand" href="${pageContext.request.contextPath}/post/pagList?page=1">Paginacija</a>
+		<a class="navbar-brand" href="${pageContext.request.contextPath}/post/pagList22">Paginacija2</a>
+		<security:authorize access="hasRole('ROLE_STUDENT')">
+			<a class="navbar-brand" href="${pageContext.request.contextPath}/post/studentDetails">Detalji</a>
+		</security:authorize>
+		<a class="navbar-brand" href="${pageContext.request.contextPath}/post/blogPosts">postovi</a>
 	</nav>
 </header>
 

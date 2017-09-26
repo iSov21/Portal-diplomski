@@ -14,23 +14,16 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-
 @Entity
-@Table(name = "category")
-public class Category {
+@Table(name="role")
+public class Role {
 
 
 	private Long id;
 	private String name;
-	private Set<Post> posts = new HashSet<>();
+	private String description;
+	private Set<UserAccount> users = new HashSet<>();
 	
-	public Category() {
-	}
-
-	public Category(Long id, String name) {
-		this.id = id;
-		this.name = name;
-	}
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -47,16 +40,25 @@ public class Category {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "category")
-	@JsonBackReference
-	public Set<Post> getPosts() {
-		return posts;
+	public String getDescription() {
+		return description;
 	}
-
-	public void setPosts(Set<Post> posts) {
-		this.posts = posts;
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "role")
+	@JsonBackReference
+	public Set<UserAccount> getUsers() {
+		return users;
+	}
+	public void setUsers(Set<UserAccount> users) {
+		this.users = users;
+	}
+	
+	@Override
+	public String toString() {
+		return name;
 	}
 	
 	

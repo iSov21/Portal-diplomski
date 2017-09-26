@@ -4,6 +4,7 @@ import java.util.List;
 
 
 import portal.model.UserAccount;
+import portal.model.UserDto;
 
 public interface UserAccountService {
 
@@ -18,4 +19,6 @@ public interface UserAccountService {
 	public void deleteUser(Long id);
 
 	public UserAccount findById(Long id);
+
+	public UserAccount register(UserDto userDto);
 }

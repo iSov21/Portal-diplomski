@@ -6,11 +6,16 @@
 	<h1>Registracija</h1>
 	
 	<div class="container login-container">
-	<form:form id="registrationForm" method="post" action="register" modelAttribute="UserAccount">
+	<form:form id="registrationForm" method="post" action="registration" modelAttribute="userDto">
 
 		<div class="input-group">
-			<label class="input-group-addon" for="username"><i class="fa fa-user"></i></label>
-			<form:input id="username" name="username" path="username" type="text" placeholder="korisničko ime" class="form-control"/><br>
+			<label class="input-group-addon" for="firstName"><i class="fa fa-user"></i></label>
+			<form:input id="firstName" name="firstName" path="firstName" type="text" placeholder="Ime" class="form-control"/><br>
+		</div>
+		
+		<div class="input-group">
+			<label class="input-group-addon" for="lastName"><i class="fa fa-user"></i></label>
+			<form:input id="lastName" name="lastName" path="lastName" type="text" placeholder="Prezime" class="form-control"/><br>
 		</div>
 		
 		<div class="input-group">

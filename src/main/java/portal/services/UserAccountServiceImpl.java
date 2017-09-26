@@ -1,11 +1,13 @@
 package portal.services;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import portal.model.UserAccount;
+import portal.model.UserDto;
 import portal.repositories.UserAccountRepository;
 
 @Service
@@ -42,6 +44,22 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@Override
 	public UserAccount findById(Long id) {
 		return userAccountRepository.findById(id);
+	}
+
+	@Override
+	public UserAccount register(UserDto userDto) {
+		UserAccount userAccount = userAccountRepository.findByEmail(userDto.getEmail());
+		
+		if(userAccount != null) {
+            return null;
+        }
+		
+		UserAccount novi = new UserAccount();
+		novi.setUsername(userDto.getFirstName() + "/" + userDto.getLastName());
+		novi.setPassword(userDto.getPassword());
+		novi.setEmail(userDto.getEmail());
+		
+		return userAccountRepository.save(novi);
 	}
 
 }

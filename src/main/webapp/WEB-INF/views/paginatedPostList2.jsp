@@ -28,19 +28,8 @@
 				<th>Tekst</th>		            
 			</tr>
 		</thead>
- 		<tbody>
-			<c:forEach items="${list}" var="name">
-			<tr>
-				<td style="display:none;"><c:out value="${name.id} "></c:out></td>               
-				<td><c:out value="${name.username} "></c:out></td>
-				<td><c:out value="${name.category.name} "></c:out></td>
-				<td><c:out value="${name.city} "></c:out></td>
-				<td><fmt:formatDate value="${name.created}" pattern="dd/MM/yyyy"/></td>
-				<td><c:out value="${name.title} "></c:out></td>    
-				<td><c:out value="${name.text} "></c:out></td>
-			</tr>                     
-			</c:forEach>
-		</tbody>
+
+		<tbody></tbody> 
 	</table>
 
 </div>
@@ -85,13 +74,46 @@
 	    	</c:otherwise>
 		</c:choose>
 	</ul>
-	</nav>	
+	</nav>
+	
+	
 
 <script>
 
+$( document ).ready(function() {	
+	
+	$.ajax({  
+        type : "get",   
+        url : "${pageContext.request.contextPath}/post/pagList2?page=2", 
+        dataType:'json',        
+        success : function(data) 
+        {  
+        	console.log(data);
+        	$('#postTable tbody').empty();
+          	$.each( data,function( key,value ) {
+          		console.log(value.created);
+                var htmlrow = "<tr>"+
+    				"<td style=\"display:none;\""+value.id+"</td>"+               
+    				"<td>"+value.username+"</td>"+
+    				"<td>"+value.category.name+"</td>"+
+    				"<td>"+value.city+"</td>"+
+    				"<td>"+value.created+"</td>"+
+    				"<td>"+value.title+"</td>"+    
+    				"<td>"+value.text+"</td>"+ 
+    			"</tr>"; 
+                      
+                $('#postTable tbody').append(htmlrow);
+            }); 
+            
+        }, 
+        error : function(e) {  
+         	alert('Error: ' + e); 
+        }  
+   }); 	
 
-$( document ).ready(function() {
-		
+
+
+	
 //select row and save id and disable/enable buttons$('#postTable tbody').on( 'click', 'tr', function (node) {
  $('#postTable tbody').on( 'click', 'tr', function (node) {	
 	var id = null;
@@ -110,6 +132,8 @@ $( document ).ready(function() {
     } 
 
 	console.log(id);
+});
+ 
 });
 </script>
 

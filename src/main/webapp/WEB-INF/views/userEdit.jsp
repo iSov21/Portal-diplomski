@@ -19,16 +19,19 @@
 			<label class="input-group-addon" for="username"><i class="fa fa-user"></i></label>
 			<form:input id="username" name="username" path="username" type="text" placeholder="korisničko ime" class="form-control"/><br>
 		</div>
+		<form:errors path="username" cssClass="error" style="color: #FF0000"/>
 		
 		<div class="input-group">
 			<label class="input-group-addon" for="password"><i class="fa fa-lock"></i></label> 
 			<form:password id="password" name="password" path="password" placeholder="lozinka" class="form-control"/><br>
 		</div>
+		<form:errors path="password" cssClass="error" style="color: #FF0000"/>
 		
 		<div class="input-group">
 			<label class="input-group-addon" for="email"><i class="fa fa-envelope"></i></label> 
 			<form:input id="email" name="email" path="email" type="email" placeholder="e-mail"/><br>
 		</div>
+		<form:errors path="email" cssClass="error" style="color: #FF0000"/>
 		
 		<div class="form-actions">
 			<input type="submit" value="Spremi" class="btn btn-block btn-primary btn-default" />
