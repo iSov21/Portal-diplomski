@@ -24,20 +24,22 @@
 				<th>Grad</th>
 				<th>Kreiran</th>
 				<th>Naslov</th>
-				<th>Tekst</th>		            
+				<th>Tekst</th>
+				<th>Slika</th>		            
 			</tr>
 		</thead>
 		<tbody>
-			<c:forEach items="${list}" var="name">
+			<c:forEach items="${list}" var="post">
 			<tr>
-				<td style="display:none;"><c:out value="${name.id} "></c:out></td>               
-				<td><c:out value="${name.username} "></c:out></td>
-				<td><c:out value="${name.category.name} "></c:out></td>
-				<td><c:out value="${name.city} "></c:out></td>
-				<td><fmt:formatDate value="${name.created}" pattern="dd/MM/yyyy"/></td>
+				<td style="display:none;"><c:out value="${post.id} "></c:out></td>               
+				<td><c:out value="${post.username} "></c:out></td>
+				<td><c:out value="${post.category.name} "></c:out></td>
+				<td><c:out value="${post.city} "></c:out></td>
+				<td><fmt:formatDate value="${post.created}" pattern="dd/MM/yyyy"/></td>
 				<%-- <td><c:out value="${name.created} "></c:out></td> --%>
-				<td><c:out value="${name.title} "></c:out></td>    
-				<td><c:out value="${name.text} "></c:out></td>
+				<td><c:out value="${post.title} "></c:out></td>    
+				<td><c:out value="${post.text} "></c:out></td>
+				<td><img alt="img" src="data:image/jpg;charset=utf-8;base64,${post.logo}" width="50" height="50"/></td>
 			</tr>                     
 			</c:forEach>
 		</tbody>

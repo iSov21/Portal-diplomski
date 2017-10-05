@@ -9,4 +9,6 @@ public interface StudentDetailsService {
 
 	void saveDetails(StudentDetails studentDetails);
 
+	boolean findByUserId(Long id);
+
 }

@@ -22,5 +22,12 @@ public class StudentDetailsServiceImpl implements StudentDetailsService {
 		studentDetailsRepository.save(studentDetails);
 	}
 
+	@Override
+	public boolean findByUserId(Long UserId) {
+		if(studentDetailsRepository.findByUserId(UserId) != null)
+			return true;
+		return false;
+	}
+
 
 }

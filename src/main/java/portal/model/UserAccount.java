@@ -13,7 +13,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -85,18 +84,13 @@ public class UserAccount {
 	public void setPosts(Set<Post> posts) {
 		this.posts = posts;
 	}
-
-
-	protected final int hash(Object object) {
-		if (object == null)
-			return 0;
-		return object.hashCode();
-	}
 	
 	public int hashCode() {
-		int hash = 13;
-		hash += hash(getUsername());
-		return hash;
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((username == null) ? 0 : username.hashCode());
+        return result;
 	}
 	
 	@Override

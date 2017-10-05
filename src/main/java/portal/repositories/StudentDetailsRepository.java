@@ -10,4 +10,5 @@ import portal.model.StudentDetails;
 public interface StudentDetailsRepository extends JpaRepository<StudentDetails, Long> {
 
 	StudentDetails findByUserId(Long UserId);
+	
 }

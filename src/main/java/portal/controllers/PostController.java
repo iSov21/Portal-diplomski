@@ -1,29 +1,41 @@
 package portal.controllers;
 
-import java.security.Principal;
-import java.util.ArrayList;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.PagedListHolder;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
+import org.springframework.web.multipart.MultipartFile;
 
 import portal.model.Category;
 import portal.model.Post;
 import portal.model.StudentDetails;
+import portal.model.UploadFile;
 import portal.model.UserAccount;
+import portal.repositories.FileRepository;
 import portal.services.CategoryService;
 import portal.services.PostService;
 import portal.services.StudentDetailsService;
@@ -44,6 +56,9 @@ public class PostController {
 	
 	@Autowired
 	StudentDetailsService studentDetailsService;
+	
+	@Autowired
+	FileRepository fileRepository;
 
 	
 	@RequestMapping(value= {"","/list"}, method = RequestMethod.GET)
@@ -61,16 +76,25 @@ public class PostController {
 	}
 	
 	@RequestMapping(value="/add", method = RequestMethod.POST)
-	public String addUser(Model model, @Valid @ModelAttribute("Post") Post post, BindingResult result){
+	public String addUser(Model model, @Valid @ModelAttribute("Post") Post post, BindingResult result, 
+			@RequestParam("logo") MultipartFile logo) throws IOException{
 		
-		if(result.hasErrors()){	
+		/*if(result.hasErrors()){	
 			model.addAttribute("category", categoryService.findAllCategories());
 			return "postAdd";
-		}
-		
+		}*/
+
+	    post.setLogo(fileToString(logo));   
+	   
 		postService.savePost(post);
 		model.addAttribute("list", postService.findAllPosts());
 		return "postList";
+	}
+	
+	public String fileToString(MultipartFile file) throws IOException{
+		byte[] encodeBase64 = Base64.getEncoder().encode(file.getBytes());
+	    String base64Encoded = new String(encodeBase64, "UTF-8");
+	    return base64Encoded;
 	}
 	
 	@RequestMapping(value="/edit", method = RequestMethod.GET)
@@ -81,16 +105,23 @@ public class PostController {
 	}
 	
 	@RequestMapping(value="/edit", method = RequestMethod.POST)
-	public String editPost(Model model, @Valid @ModelAttribute("Post") Post post, BindingResult result){
+	public String editPost(Model model, @Valid @ModelAttribute("Post") Post post, BindingResult result,
+			@RequestParam("logo") MultipartFile logo) throws IOException{
 		
-		if(result.hasErrors()){	
+		if(logo.getSize()==0)
+			post.setLogo(postService.findById(post.getId()).getLogo());
+		
+		/*if(result.hasErrors()){	
 			model.addAttribute("category", categoryService.findAllCategories());
 			return "postEdit";
-		}
+		}*/
+		post.setLogo(fileToString(logo));  
+		
 		postService.updatePost(post);
 		model.addAttribute("list", postService.findAllPosts());
 		return "postList";
 	}
+	
 	
 	@RequestMapping(value="/delete", method = RequestMethod.GET)
 	public String deletePost(@RequestParam("id") Long id,  Model model){
@@ -128,10 +159,15 @@ public class PostController {
 	}
 	
 	@RequestMapping(value="/studentDetails", method = RequestMethod.POST)
-	public String saveDetails(Model model, StudentDetails studentDetails){
+	public String saveDetails(Model model, @ModelAttribute("StudentDetails") StudentDetails studentDetails, 
+			@RequestParam("file") MultipartFile file) throws Exception{
+			
+		studentDetails.setData(file.getBytes());
+		
 		studentDetailsService.saveDetails(studentDetails);
 		model.addAttribute("StudentDetails", studentDetails);
 		model.addAttribute("msg", "Detalji spremljeni");
+	
 		return "studentDetails";
 	}
 	
@@ -198,25 +234,46 @@ public class PostController {
             pagedListHolder.setPage(page-1);
             model.addAttribute("list", pagedListHolder.getPageList());
         }
+		//kratki tekst za prikaz
+		for(Post post : pagedListHolder.getPageList()) {
+			post.setText(post.getText().substring(0, 10)+"...");
+		}
+		
 		model.addAttribute("page", page );
 		return "blogPostList";
 	}
 	
 	@RequestMapping(value= "/show", method = RequestMethod.GET)
-	public String showPost(@RequestParam("id") Long id, Model model){
+	public String showPost(@RequestParam("id") Long id, Model model) throws UnsupportedEncodingException{
 		Post post = postService.findById(id);
 		model.addAttribute("post", post );
-				
+		
 		Set<UserAccount> userList = post.getSubmited();
 		model.addAttribute("userList", userList );
+		
+		Map<String, StudentDetails> details = new HashMap<>();
+		for (UserAccount userAccount : userList) {
+			details.put(userAccount.getUsername(), studentDetailsService.findById(userAccount.getId()));
+		}
+		
+		model.addAttribute("detailsList", details );
+		
 		return "showPost";
 	}
 	
 	@RequestMapping(value= "/sign", method = RequestMethod.GET)
 	public String sign(@RequestParam("id") Long id, Model model, Authentication authentication){
-
+		//provjera jel prijavljen već???
+		//provjeri jel ima ispunjene detalje
+		
 		Post post = postService.findById(id);
 		UserAccount userAccount = userAccountService.findByUsername(authentication.getName());
+		
+		if(!studentDetailsService.findByUserId(userAccount.getId())){
+			model.addAttribute("msg", "Molim prvo ispunite detalje!" );
+			return "redirect:/post/studentDetails";
+		}
+		
 		if(!post.getSubmited().contains(userAccount)) {
 			post.getSubmited().add(userAccount);
 			postService.updatePost(post);
@@ -230,6 +287,42 @@ public class PostController {
 		Set<UserAccount> userList = post.getSubmited();
 		model.addAttribute("userList", userList );
 		return "showPost";
+	}
+	
+	
+	@RequestMapping(value = "/fileUpload", method = RequestMethod.POST)
+	public String submit(@RequestParam("file") MultipartFile file, Model model) throws Exception {
+		UploadFile uploadFile = new UploadFile();
+		uploadFile.setFileName(file.getOriginalFilename());
+        uploadFile.setData(file.getBytes());
+        fileRepository.save(uploadFile);
+	    model.addAttribute("file", file);
+	    
+	    byte[] encodeBase64 = Base64.getEncoder().encode(file.getBytes());
+	    String base64Encoded = new String(encodeBase64, "UTF-8");
+	    model.addAttribute("base",base64Encoded);
+	    model.addAttribute("encode",Base64.getEncoder().encode(file.getBytes()));
+	    model.addAttribute("decode",Base64.getDecoder().decode(Base64.getEncoder().encode(file.getBytes())));
+	    model.addAttribute("image",file.getBytes());
+	    
+	    
+	    return "fileUploadView";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/download", produces = MediaType.APPLICATION_PDF_VALUE)
+	public void download(HttpServletResponse response, @RequestParam("id") Long id)  throws Exception {
+
+		StudentDetails studentDetails = studentDetailsService.findById(id);
+		
+		OutputStream out = response.getOutputStream();
+	    response.setHeader("Content-Disposition", "download");
+	    //response.setContentType("image/png");
+	    response.setContentType("application/pdf");
+	    FileCopyUtils.copy(studentDetails.getData(), out);
+	    out.flush();
+	    out.close();
+	    
 	}
 	
 }

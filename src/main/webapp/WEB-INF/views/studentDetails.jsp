@@ -8,7 +8,7 @@
 	
 	<div class="container login-container container-blog">
 	<div>${msg}</div>
-	<form:form id="detailsForm" method="post" action="studentDetails" modelAttribute="StudentDetails" class="form">
+	<form:form id="detailsForm" method="post" action="studentDetails" modelAttribute="StudentDetails" class="form" enctype="multipart/form-data">
 			
 		<div class="input-group" style="display:none;">
 			<label class="input-group-addon" for="userId"><i class="fa fa-user"></i></label> 
@@ -28,12 +28,27 @@
 		</div>
 		<form:errors path="cv" cssClass="error" style="color: #FF0000"/>
 		
+		 <div class="input-group">
+			<label for="file">File:</label> 
+			<input id="file" type="file" name="file"/>
+		</div> 
 		
 		<div class="form-actions">
 			<input type="submit" value="Uredi" class="btn btn-block btn-primary btn-default" />
 		</div>
 	</form:form>
  	</div>
-	
-
+ 	
+ 	<div class="container login-container container-blog">
+ 	<form:form id="detailsForm" method="post" action="fileUpload" class="form" enctype="multipart/form-data">
+		 <div class="input-group">
+			<label for="file">File:</label> 
+			<input id="file" type="file" name="file" />
+		</div>
+		
+		<div class="form-actions">
+			<input type="submit" value="File" class="btn btn-block btn-primary btn-default" />
+		</div>
+	</form:form>
+	</div>
 <%@ include file="/WEB-INF/views/template/footer.jsp"%>

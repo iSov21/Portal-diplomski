@@ -34,6 +34,7 @@ public class Post {
 	private String title;
 	private String text;	
 	private Date created;
+	private String logo;
 	private Set<UserAccount> submited = new HashSet<>();
 	
 	@Id
@@ -109,6 +110,13 @@ public class Post {
 	}
 	public void setSubmited(Set<UserAccount> submited) {
 		this.submited = submited;
+	}
+
+	public String getLogo() {
+		return logo;
+	}
+	public void setLogo(String logo) {
+		this.logo = logo;
 	}
 	
 	

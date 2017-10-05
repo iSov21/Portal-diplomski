@@ -18,7 +18,7 @@ body {
 
 .login-container {
   padding: 30px;
-  max-width: 350px;
+  max-width: 400px;
   width: 100% !important;
   background-color: #F7F7F7;
   margin: 0 auto;
@@ -104,4 +104,8 @@ body {
 a.disabled {
    pointer-events: none;
    cursor: default;
+}
+
+img{
+	margin-right: 10px;
 }

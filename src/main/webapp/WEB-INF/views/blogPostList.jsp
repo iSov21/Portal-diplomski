@@ -19,6 +19,7 @@
 			<c:forEach items="${list}" var="post">
 			<div class="well">
 				<p style="display:none;"><c:out value="${post.id} "></c:out></p> 
+				<img alt="img" src="data:image/jpg;charset=utf-8;base64,${post.logo}" width="140" height="120" class="pull-left"/>
 				<h4><strong>${post.title}</strong></h4>     
 				<p>${post.text}</p>
 				<p><a href="${pageContext.request.contextPath}/post/show?id=${post.id}">Read more</a></p>

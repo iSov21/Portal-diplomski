@@ -1,8 +1,10 @@
 package portal.model;
 
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
 
 @Entity
 @Table(name = "details")
@@ -12,6 +14,7 @@ public class StudentDetails {
 	private Long userId;
 	private String contactEmail;
 	private String cv;
+	private byte[] data;
 	
 	public Long getUserId() {
 		return userId;
@@ -31,7 +34,11 @@ public class StudentDetails {
 	public void setCv(String cv) {
 		this.cv = cv;
 	}
-	
-	
+	public byte[] getData() {
+		return data;
+	}
+	public void setData(byte[] data) {
+		this.data = data;
+	}
 	
 }

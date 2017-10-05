@@ -13,6 +13,7 @@ import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -29,6 +30,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 	
 	
 	private final Logger logger = LoggerFactory.getLogger(WebConfig.class);
+	
 	@Bean
 	public ViewResolver viewResolver() {
 	 InternalResourceViewResolver internalResourceViewResolver = new InternalResourceViewResolver();
@@ -66,6 +68,12 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 	    converter = new MappingJackson2HttpMessageConverter();
 	    converters.add(converter);
 	    logger.info("MappingJackson2HttpMessageConverter added");
-
+	}
+	
+	@Bean
+	public CommonsMultipartResolver multipartResolver() {
+	    CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+	    multipartResolver.setMaxUploadSize(100000);
+	    return new CommonsMultipartResolver();
 	}
 }

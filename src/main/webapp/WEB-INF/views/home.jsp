@@ -4,14 +4,14 @@
 
 	<h1>Welcome</h1>
 
-	<div>
+	<div class="row">
 		<a class="navbar-brand" href="${pageContext.request.contextPath}/registration">Registracija</a>
 	</div>
 	
 	
 	<div>
-		<security:authorize access="hasRole('ROLE_USER')">
-   		 This text is only visible to a user
+		<security:authorize access="hasRole('ROLE_STUDENT')">
+   		 This text is only visible to a student
     	<br/>
 		</security:authorize>
 	</div>

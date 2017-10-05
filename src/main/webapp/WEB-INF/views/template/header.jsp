@@ -34,7 +34,6 @@
 <header>
 	<nav class="navbar navbar-fixed-top rgba-teal-slight" >
 <!-- 	<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-pink scrolling-navbar"> -->
-		<a class="navbar-brand"><strong>Navbar</strong></a>
 		<a class="navbar-brand" href="${pageContext.request.contextPath}/">Home <span class="sr-only">(current)</span></a>
 		<a class="navbar-brand" href="/portal/user/list">Administracija korisnika</a>
 		<a class="navbar-brand" href="${pageContext.request.contextPath}/post/list">Administracija oglasa</a>

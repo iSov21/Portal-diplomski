@@ -6,7 +6,7 @@
 	<h1>Dodaj novi post</h1>
 	
 	<div class="container login-container">
-	<form:form id="postForm" method="post" action="add" modelAttribute="Post" class="form">
+	<form:form id="postForm" method="post" action="add" modelAttribute="Post" class="form"  enctype="multipart/form-data">
 		
 		
 		<div class="input-group" style="display:none;">
@@ -27,6 +27,7 @@
 			<form:input id="username" name="username" path="username" type="text" placeholder="korisničko ime" class="form-control"/><br>
 		</div>
 		<form:errors path="username" cssClass="error" style="color: #FF0000"/>
+	
 		
 		<div class="input-group">
 			<label class="input-group-addon" for="category"><i class="fa fa-clone"></i></label> 
@@ -50,6 +51,11 @@
 			<label class="input-group-addon" for="text"><i class="fa fa-align-center "></i></label> 
 			<form:input id="text" name="text" path="text" type="text" placeholder="tekst" rows="5"/><br>
 		</div>
+		
+		<div class="input-group">
+			<label for="logo">Logo:</label> 
+			<input id="logo" type="file" name="logo"/>
+		</div> 
 		
 		<div class="form-actions">
 			<input type="submit" value="Spremi post" class="btn btn-block btn-primary btn-default" />
