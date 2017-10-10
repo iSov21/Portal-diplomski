@@ -23,30 +23,36 @@
 			<div class="row" style="margin-left: 6px;">
 			<img alt="img" src="data:image/jpg;charset=utf-8;base64,${post.logo}" width="120" height="100" class="pull-left"/>			  
 			<p>${post.text}</p>
-			</div>
-			
-			<security:authorize access="hasRole('ROLE_STUDENT')">
-			<c:choose>
-				<c:when test="${!submited}">
-   					<a class="btn btn-default" href="<c:url value='/post/submit?id=${post.id}' />">Prijava</a>
-   				</c:when>
-   				<c:otherwise>
-   					<div class="row" style="margin-left: 6px;">
-   						Prijavili ste se na ovaj posao!
-   					</div>
-   				</c:otherwise>
-   			</c:choose>
-			</security:authorize>
-			
-			<security:authorize access="hasRole('ROLE_POSLODAVAC')">
-   				<a class="btn btn-default" href="<c:url value='/post/submitedList?id=${post.id}' />">Prijavljeni korisnici</a>
-			</security:authorize>
-		
+			</div>		
 		</div>	
 	</div>		
 	</div>
 	
-
+	<div class="generic-container">
+	<div class="panel-title"><span class="lead">Lista prijavljenih korisnika</span></div>
+	<table class="table table-hover table-bordered table-sm" id="userTable">
+		<thead>
+			<tr>
+				<!-- <th style="display:none;">ID</th> -->
+				<th>Korisničko ime</th>
+				<th>Kontakt email</th>
+				<th>CV/nesto</th>
+				<th>Link na cv</th>	            
+			</tr>
+		</thead>
+		<tbody>
+			<c:forEach items="${detailsList}" var="user">
+			<tr>
+				<td style="display:none;"><c:out value="${user.value.userId} "></c:out></td>               
+				<td><c:out value="${user.key} "></c:out></td>
+				<td><c:out value="${user.value.contactEmail} "></c:out></td> 
+				<td><c:out value="${user.value.cv} "></c:out></td>   
+				<td><a class="btn btn-default" href="<c:url value='/post/download?id=${user.value.userId}' />">Skini file</a></td> 
+			</tr>                 
+			</c:forEach>
+		</tbody>
+	</table>
+	</div>
 
 	
 

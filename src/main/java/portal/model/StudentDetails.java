@@ -12,9 +12,11 @@ public class StudentDetails {
 
 	@Id
 	private Long userId;
+	private String firstName;
+	private String lastName;
 	private String contactEmail;
-	private String cv;
-	private byte[] data;
+	private byte[] cv;
+	
 	
 	public Long getUserId() {
 		return userId;
@@ -22,23 +24,31 @@ public class StudentDetails {
 	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
+	public String getFirstName() {
+		return firstName;
+	}
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	public String getLastName() {
+		return lastName;
+	}
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 	public String getContactEmail() {
 		return contactEmail;
 	}
 	public void setContactEmail(String contactEmail) {
 		this.contactEmail = contactEmail;
 	}
-	public String getCv() {
+	public byte[] getCv() {
 		return cv;
 	}
-	public void setCv(String cv) {
+	public void setCv(byte[] cv) {
 		this.cv = cv;
 	}
-	public byte[] getData() {
-		return data;
-	}
-	public void setData(byte[] data) {
-		this.data = data;
-	}
+	
+
 	
 }

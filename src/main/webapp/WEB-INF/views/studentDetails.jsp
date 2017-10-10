@@ -14,23 +14,28 @@
 			<label class="input-group-addon" for="userId"><i class="fa fa-user"></i></label> 
 			<form:input id="userId" name="userId" path="userId" type="text" placeholder="id" class="form-control"/><br>
 		</div>
-			
+		
+		<div class="input-group">
+			<label for="firstName">Ime:</label> 
+			<form:input id="firstName" name="firstName" path="firstName" type="text" placeholder="Ime" class="form-control"/><br>
+		</div>
+		<form:errors path="firstName" cssClass="error" style="color: #FF0000"/>
+		
+		<div class="input-group">
+			<label for="lastName">Prezime:</label> 
+			<form:input id="lastName" name="lastName" path="lastName" type="text" placeholder="Prezime" class="form-control"/><br>
+		</div>
+		<form:errors path="lastName" cssClass="error" style="color: #FF0000"/>
+		
 		<div class="input-group">
 			<label for="contactEmail">Email za kontakt</label>
 			<form:input id="contactEmail" name="contactEmail" path="contactEmail" type="text" placeholder="email" class="form-control"/><br>
 		</div>
 		<form:errors path="contactEmail" cssClass="error" style="color: #FF0000"/>
-
-		
-		<div class="input-group">
-			<label for="cv">Cv:</label> 
-			<form:textarea id="cv" name="cv" path="cv" type="text" placeholder="cv"/><br>
-		</div>
-		<form:errors path="cv" cssClass="error" style="color: #FF0000"/>
 		
 		 <div class="input-group">
-			<label for="file">File:</label> 
-			<input id="file" type="file" name="file"/>
+			<label for="cv2">Životopis:</label> 
+			<input id="cv2" type="file" name="cv2"/>
 		</div> 
 		
 		<div class="form-actions">

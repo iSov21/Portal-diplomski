@@ -53,8 +53,8 @@
 		</div>
 		
 		<div class="input-group">
-			<label for="logo">Logo:</label> 
-			<input id="logo" type="file" name="logo"/>
+			<label for="logo2">Logo:</label> 
+			<input id="logo2" type="file" name="logo2"/>
 		</div> 
 		
 		<div class="form-actions">

@@ -37,16 +37,22 @@
 		<a class="navbar-brand" href="${pageContext.request.contextPath}/">Home <span class="sr-only">(current)</span></a>
 		<a class="navbar-brand" href="/portal/user/list">Administracija korisnika</a>
 		<a class="navbar-brand" href="${pageContext.request.contextPath}/post/list">Administracija oglasa</a>
-		<security:authorize access="!isAuthenticated()">
-			<a class="navbar-brand" href="${pageContext.request.contextPath}/login">Prijava</a>
-		</security:authorize>
 		<a class="navbar-brand" href="${pageContext.request.contextPath}/post/search">Pretraži oglase</a>
 		<a class="navbar-brand" href="${pageContext.request.contextPath}/post/pagList?page=1">Paginacija</a>
 		<a class="navbar-brand" href="${pageContext.request.contextPath}/post/pagList22">Paginacija2</a>
 		<security:authorize access="hasRole('ROLE_STUDENT')">
 			<a class="navbar-brand" href="${pageContext.request.contextPath}/post/studentDetails">Detalji</a>
 		</security:authorize>
-		<a class="navbar-brand" href="${pageContext.request.contextPath}/post/blogPosts">postovi</a>
+		<a class="navbar-brand" href="${pageContext.request.contextPath}/post/blogPosts">Postovi</a>
+		
+		<div class="pull-right">
+			<security:authorize access="!isAuthenticated()">
+				<a class="navbar-brand" href="${pageContext.request.contextPath}/login">Prijava</a>
+			</security:authorize>
+			<security:authorize access="isAuthenticated()"> 
+				<a class="navbar-brand" href="${pageContext.request.contextPath}/logout">Odjava</a>
+			</security:authorize>
+		</div>
 	</nav>
 </header>
 

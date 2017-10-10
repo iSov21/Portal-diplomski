@@ -1,10 +1,7 @@
 package portal.controllers;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 import java.util.HashMap;
@@ -28,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.multipart.MultipartFile;
 
 import portal.model.Category;
@@ -43,6 +41,7 @@ import portal.services.UserAccountService;
 
 @Controller
 @RequestMapping("/post")
+@SessionScope
 public class PostController {
 	
 	@Autowired
@@ -59,7 +58,7 @@ public class PostController {
 	
 	@Autowired
 	FileRepository fileRepository;
-
+	
 	
 	@RequestMapping(value= {"","/list"}, method = RequestMethod.GET)
 	public String list(Model model){
@@ -77,12 +76,12 @@ public class PostController {
 	
 	@RequestMapping(value="/add", method = RequestMethod.POST)
 	public String addUser(Model model, @Valid @ModelAttribute("Post") Post post, BindingResult result, 
-			@RequestParam("logo") MultipartFile logo) throws IOException{
+			@RequestParam("logo2") MultipartFile logo) throws IOException{
 		
-		/*if(result.hasErrors()){	
+		if(result.hasErrors()){	
 			model.addAttribute("category", categoryService.findAllCategories());
 			return "postAdd";
-		}*/
+		}
 
 	    post.setLogo(fileToString(logo));   
 	   
@@ -160,9 +159,9 @@ public class PostController {
 	
 	@RequestMapping(value="/studentDetails", method = RequestMethod.POST)
 	public String saveDetails(Model model, @ModelAttribute("StudentDetails") StudentDetails studentDetails, 
-			@RequestParam("file") MultipartFile file) throws Exception{
+			@RequestParam("cv2") MultipartFile file) throws Exception{
 			
-		studentDetails.setData(file.getBytes());
+		studentDetails.setCv(file.getBytes());
 		
 		studentDetailsService.saveDetails(studentDetails);
 		model.addAttribute("StudentDetails", studentDetails);
@@ -244,24 +243,21 @@ public class PostController {
 	}
 	
 	@RequestMapping(value= "/show", method = RequestMethod.GET)
-	public String showPost(@RequestParam("id") Long id, Model model) throws UnsupportedEncodingException{
+	public String showPost(@RequestParam("id") Long id, Model model, Authentication authentication) 
+			throws UnsupportedEncodingException{
+		
 		Post post = postService.findById(id);
-		model.addAttribute("post", post );
-		
-		Set<UserAccount> userList = post.getSubmited();
-		model.addAttribute("userList", userList );
-		
-		Map<String, StudentDetails> details = new HashMap<>();
-		for (UserAccount userAccount : userList) {
-			details.put(userAccount.getUsername(), studentDetailsService.findById(userAccount.getId()));
+		UserAccount userAccount;
+		if(authentication != null) {
+			userAccount = userAccountService.findByUsername(authentication.getName());
+			model.addAttribute("submited", post.getSubmited().contains(userAccount) );
 		}
 		
-		model.addAttribute("detailsList", details );
-		
+		model.addAttribute("post", post );
 		return "showPost";
 	}
 	
-	@RequestMapping(value= "/sign", method = RequestMethod.GET)
+	@RequestMapping(value= "/submit", method = RequestMethod.GET)
 	public String sign(@RequestParam("id") Long id, Model model, Authentication authentication){
 		//provjera jel prijavljen već???
 		//provjeri jel ima ispunjene detalje
@@ -283,6 +279,7 @@ public class PostController {
 		}
 		
 		model.addAttribute("post", post );
+		model.addAttribute("submited", true );
 		
 		Set<UserAccount> userList = post.getSubmited();
 		model.addAttribute("userList", userList );
@@ -319,10 +316,31 @@ public class PostController {
 	    response.setHeader("Content-Disposition", "download");
 	    //response.setContentType("image/png");
 	    response.setContentType("application/pdf");
-	    FileCopyUtils.copy(studentDetails.getData(), out);
+	    FileCopyUtils.copy(studentDetails.getCv(), out);
 	    out.flush();
 	    out.close();
 	    
+	}
+	
+	@RequestMapping(value= "/submitedList", method = RequestMethod.GET)
+	public String submitedPost(@RequestParam("id") Long id, Model model, Authentication authentication) 
+			throws UnsupportedEncodingException{
+		
+		Post post = postService.findById(id);
+
+		
+		model.addAttribute("post", post );
+		Set<UserAccount> userList = post.getSubmited();
+		model.addAttribute("userList", userList );
+		
+		Map<String, StudentDetails> details = new HashMap<>();
+		for (UserAccount user : userList) {
+			details.put(user.getUsername(), studentDetailsService.findById(user.getId()));
+		}
+		
+		model.addAttribute("detailsList", details );
+		
+		return "showSubmitedUsers";
 	}
 	
 }
