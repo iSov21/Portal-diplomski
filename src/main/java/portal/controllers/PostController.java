@@ -4,9 +4,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
@@ -105,16 +104,17 @@ public class PostController {
 	
 	@RequestMapping(value="/edit", method = RequestMethod.POST)
 	public String editPost(Model model, @Valid @ModelAttribute("Post") Post post, BindingResult result,
-			@RequestParam("logo") MultipartFile logo) throws IOException{
+			@RequestParam("logo2") MultipartFile logo) throws IOException{
+				
+		if(result.hasErrors()){	
+			model.addAttribute("category", categoryService.findAllCategories());
+			return "postEdit";
+		}
 		
 		if(logo.getSize()==0)
 			post.setLogo(postService.findById(post.getId()).getLogo());
-		
-		/*if(result.hasErrors()){	
-			model.addAttribute("category", categoryService.findAllCategories());
-			return "postEdit";
-		}*/
-		post.setLogo(fileToString(logo));  
+		else
+			post.setLogo(fileToString(logo));  
 		
 		postService.updatePost(post);
 		model.addAttribute("list", postService.findAllPosts());
@@ -143,6 +143,28 @@ public class PostController {
 		return "postList";
 	}
 	
+	@RequestMapping(value="/searchCity", method = RequestMethod.POST)
+	public String searchCity(String city, Model model){
+		
+		List<Post> list = postService.findByCity(city);
+		model.addAttribute("list", list );
+		return "postList";
+	}
+	
+	@RequestMapping(value="/searchCategoryAndCity", method = RequestMethod.POST)
+	public String searchCategoryAndCity(Category category, String city, Model model){
+		
+		if(category.getId() == null)
+			model.addAttribute("list", postService.findByCity(city) );
+		else if(city.equals("") ) {
+			Category categoryWithPosts = categoryService.findById(category.getId());
+			model.addAttribute("list", categoryWithPosts.getPosts() );
+		}
+		else
+			model.addAttribute("list", postService.findByCategoryAndCity(category, city) );
+		return "postList";
+	}
+	
 	@RequestMapping(value="/studentDetails", method = RequestMethod.GET)
 	public String studentDetails(Model model, Authentication authentication){
 		UserAccount user = userAccountService.findByUsername(authentication.getName());
@@ -160,8 +182,11 @@ public class PostController {
 	@RequestMapping(value="/studentDetails", method = RequestMethod.POST)
 	public String saveDetails(Model model, @ModelAttribute("StudentDetails") StudentDetails studentDetails, 
 			@RequestParam("cv2") MultipartFile file) throws Exception{
-			
-		studentDetails.setCv(file.getBytes());
+		
+		if(file.getSize()==0)
+			studentDetails.setCv(studentDetailsService.findById(studentDetails.getUserId()).getCv());
+		else
+			studentDetails.setCv(file.getBytes());
 		
 		studentDetailsService.saveDetails(studentDetails);
 		model.addAttribute("StudentDetails", studentDetails);
@@ -251,6 +276,9 @@ public class PostController {
 		if(authentication != null) {
 			userAccount = userAccountService.findByUsername(authentication.getName());
 			model.addAttribute("submited", post.getSubmited().contains(userAccount) );
+			
+			if( userAccount.getUsername().equals(post.getUsername()) ) 
+				model.addAttribute("employeeBtn", true );
 		}
 		
 		model.addAttribute("post", post );
@@ -327,15 +355,14 @@ public class PostController {
 			throws UnsupportedEncodingException{
 		
 		Post post = postService.findById(id);
-
 		
 		model.addAttribute("post", post );
 		Set<UserAccount> userList = post.getSubmited();
 		model.addAttribute("userList", userList );
 		
-		Map<String, StudentDetails> details = new HashMap<>();
+		Set<StudentDetails> details = new HashSet<>();
 		for (UserAccount user : userList) {
-			details.put(user.getUsername(), studentDetailsService.findById(user.getId()));
+			details.add(studentDetailsService.findById(user.getId()));
 		}
 		
 		model.addAttribute("detailsList", details );

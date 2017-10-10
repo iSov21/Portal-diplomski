@@ -35,8 +35,10 @@
 	<nav class="navbar navbar-fixed-top rgba-teal-slight" >
 <!-- 	<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-pink scrolling-navbar"> -->
 		<a class="navbar-brand" href="${pageContext.request.contextPath}/">Home <span class="sr-only">(current)</span></a>
-		<a class="navbar-brand" href="/portal/user/list">Administracija korisnika</a>
-		<a class="navbar-brand" href="${pageContext.request.contextPath}/post/list">Administracija oglasa</a>
+		<security:authorize access="hasRole('ROLE_ADMIN')">
+			<a class="navbar-brand" href="/portal/user/list">Administracija korisnika</a>		
+			<a class="navbar-brand" href="${pageContext.request.contextPath}/post/list">Administracija oglasa</a>
+		</security:authorize>
 		<a class="navbar-brand" href="${pageContext.request.contextPath}/post/search">Pretraži oglase</a>
 		<a class="navbar-brand" href="${pageContext.request.contextPath}/post/pagList?page=1">Paginacija</a>
 		<a class="navbar-brand" href="${pageContext.request.contextPath}/post/pagList22">Paginacija2</a>
@@ -50,14 +52,10 @@
 				<a class="navbar-brand" href="${pageContext.request.contextPath}/login">Prijava</a>
 			</security:authorize>
 			<security:authorize access="isAuthenticated()"> 
+				<div class="navbar-brand"> Hello <security:authentication var="logged" property="principal.username" />${logged}! </div>
 				<a class="navbar-brand" href="${pageContext.request.contextPath}/logout">Odjava</a>
 			</security:authorize>
 		</div>
 	</nav>
 </header>
 
-<div>
-	<security:authorize access="isAuthenticated()"> 
-		Hello <security:authentication var="logged" property="principal.username" />${logged}! 
-	</security:authorize>
-</div>

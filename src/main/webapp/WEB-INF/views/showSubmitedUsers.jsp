@@ -34,20 +34,20 @@
 		<thead>
 			<tr>
 				<!-- <th style="display:none;">ID</th> -->
-				<th>Korisničko ime</th>
+				<th>Ime</th>
+				<th>Prezime</th>
 				<th>Kontakt email</th>
-				<th>CV/nesto</th>
 				<th>Link na cv</th>	            
 			</tr>
 		</thead>
 		<tbody>
 			<c:forEach items="${detailsList}" var="user">
 			<tr>
-				<td style="display:none;"><c:out value="${user.value.userId} "></c:out></td>               
-				<td><c:out value="${user.key} "></c:out></td>
-				<td><c:out value="${user.value.contactEmail} "></c:out></td> 
-				<td><c:out value="${user.value.cv} "></c:out></td>   
-				<td><a class="btn btn-default" href="<c:url value='/post/download?id=${user.value.userId}' />">Skini file</a></td> 
+				<td style="display:none;"><c:out value="${user.userId} "></c:out></td>               
+				<td><c:out value="${user.firstName} "></c:out></td>
+				<td><c:out value="${user.lastName} "></c:out></td> 
+				<td><c:out value="${user.contactEmail} "></c:out></td>   
+				<td><a class="btn btn-default" href="<c:url value='/post/download?id=${user.userId}' />">Skini file</a></td> 
 			</tr>                 
 			</c:forEach>
 		</tbody>

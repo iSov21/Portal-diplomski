@@ -9,10 +9,9 @@
 	
 
 	<div class="generic-container">
-		<div>
-     		<a class="btn btn-default" href="<c:url value='/post/add' />">Novi post</a>
-    	</div>
-	
+		<security:authorize access="hasRole('ROLE_POSLODAVAC')">
+			<div><a class="btn btn-default" href="<c:url value='/post/add' />">Novi post</a></div>
+	 	</security:authorize>
 
 		<div class="container">
 		<div class="panel-title"><span class="lead">Lista postova</span></div>

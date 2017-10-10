@@ -7,7 +7,6 @@
 
 	<h1>Ponuda poslova</h1>
 	
-
 	<div class="generic-container">
 
 	<div class="panel-title"><span class="lead"></span>${error}</div>
@@ -39,7 +38,9 @@
 			</security:authorize>
 			
 			<security:authorize access="hasRole('ROLE_POSLODAVAC')">
-   				<a class="btn btn-default" href="<c:url value='/post/submitedList?id=${post.id}' />">Prijavljeni korisnici</a>
+				<c:if test="${employeeBtn}">
+   					<a class="btn btn-default" href="<c:url value='/post/submitedList?id=${post.id}' />">Prijavljeni korisnici</a>
+   				</c:if>
 			</security:authorize>
 		
 		</div>	

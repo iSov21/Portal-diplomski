@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import portal.model.Category;
 import portal.model.Post;
 import portal.repositories.PostRepository;
 
@@ -42,6 +43,21 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public Post findById(Long id) {
 		return postRepository.findById(id);
+	}
+
+	@Override
+	public List<Post> findByCity(String city) {
+		return postRepository.findByCity(city);
+	}
+
+	@Override
+	public List<Post> findByCategoryAndCity(Category category, String city) {
+		return postRepository.findByCategoryAndCity(category, city);
+	}
+
+	@Override
+	public List<Post> findByCategoryOrCity(Category category, String city) {
+		return postRepository.findByCategoryOrCity(category, city);
 	}
 	
 
