@@ -65,5 +65,21 @@
 		</div>
 	</form:form>
  	</div>
+ 	
+ 	<div class="container login-container">
+	<form:form id="searchForm" method="post" action="searchByUser" modelAttribute="UserAccount" class="form">
+		
+		<label>Pretraži po korisniku:</label>	
+ 		
+ 		<div class="input-group">
+			<form:input id="username" name="username" path="username" type="text" placeholder="Korisničko ime" class="form-control"/><br>	
+ 		</div>	
+ 		
+		<div class="form-actions">
+			<input type="submit" value="Pretraži" class="btn btn-block btn-primary btn-default" />
+			
+		</div>
+	</form:form>
+ 	</div>
 
 <%@ include file="/WEB-INF/views/template/footer.jsp"%>

@@ -59,6 +59,11 @@ public class PostServiceImpl implements PostService {
 	public List<Post> findByCategoryOrCity(Category category, String city) {
 		return postRepository.findByCategoryOrCity(category, city);
 	}
+
+	@Override
+	public List<Post> findByUsername(String username) {
+		return postRepository.findByUsername(username);
+	}
 	
 
 }

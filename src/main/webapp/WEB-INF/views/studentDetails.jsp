@@ -39,7 +39,7 @@
 		</div> 
 		
 		<div class="form-actions">
-			<input type="submit" value="Uredi" class="btn btn-block btn-primary btn-default" />
+			<input type="submit" value="Spremi svoje podatke" class="btn btn-block btn-primary btn-default" />
 		</div>
 	</form:form>
  	</div>

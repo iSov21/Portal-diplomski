@@ -18,4 +18,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	List<Post> findByCategoryAndCity(Category category, String city);
 
 	List<Post> findByCategoryOrCity(Category category, String city);
+
+	List<Post> findByUsername(String username);
 }

@@ -40,6 +40,8 @@
 			<security:authorize access="hasRole('ROLE_POSLODAVAC')">
 				<c:if test="${employeeBtn}">
    					<a class="btn btn-default" href="<c:url value='/post/submitedList?id=${post.id}' />">Prijavljeni korisnici</a>
+   					<a id="editBtn" class="btn btn-default" href="<c:url value='/post/edit?id=${post.id}' />">Uredi post</a>
+     				<a id="deleteBtn" class="btn btn-default" onClick="return confirm('Sigurno želite izbrisati post?')" href="<c:url value='/post/delete?id=${post.id}'/>">Obriši post</a>	
    				</c:if>
 			</security:authorize>
 		

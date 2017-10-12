@@ -23,5 +23,7 @@ public interface PostService {
 
 	public List<Post> findByCategoryOrCity(Category category, String city);
 
+	public List<Post> findByUsername(String username);
+
 	
 }

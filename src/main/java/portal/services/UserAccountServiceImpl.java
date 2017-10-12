@@ -54,7 +54,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         }
 		
 		UserAccount novi = new UserAccount();
-		novi.setUsername(userDto.getFirstName() + "/" + userDto.getLastName());
+		novi.setUsername(userDto.getUsername());
 		novi.setPassword(userDto.getPassword());
 		novi.setEmail(userDto.getEmail());
 		

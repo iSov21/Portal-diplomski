@@ -24,7 +24,7 @@
 				<p><a href="${pageContext.request.contextPath}/post/show?id=${post.id}">Read more</a></p>
 				<i class="fa fa-user"></i> by <a href="#">${post.username}</a> 
 			 	| <i class="fa fa-tags"></i> ${post.category.name}
-				| <i class="fa fa-map-marker"></i><a href="#">${post.city}</a>
+				| <i class="fa fa-map-marker"></i><a href="#"> ${post.city}</a>
 				| <i class="fa fa-calendar-o"></i><fmt:formatDate value="${post.created}" pattern="dd/MM/yyyy"/>
 			</div>
 			</c:forEach>

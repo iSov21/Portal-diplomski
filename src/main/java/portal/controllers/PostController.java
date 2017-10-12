@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import portal.model.Category;
 import portal.model.Post;
@@ -73,6 +74,22 @@ public class PostController {
 		return "postAdd";
 	}
 	
+	@RequestMapping(value="/addAdmin", method = RequestMethod.POST)
+	public String addUserAdmin(Model model, @Valid @ModelAttribute("Post") Post post, BindingResult result, 
+			@RequestParam("logo2") MultipartFile logo) throws IOException{
+		
+		if(result.hasErrors()){	
+			model.addAttribute("category", categoryService.findAllCategories());
+			return "postAdd";
+		}
+
+	    post.setLogo(fileToString(logo));   
+	   
+		postService.savePost(post);
+		model.addAttribute("list", postService.findAllPosts());
+		return "postList";
+	}
+	
 	@RequestMapping(value="/add", method = RequestMethod.POST)
 	public String addUser(Model model, @Valid @ModelAttribute("Post") Post post, BindingResult result, 
 			@RequestParam("logo2") MultipartFile logo) throws IOException{
@@ -86,7 +103,7 @@ public class PostController {
 	   
 		postService.savePost(post);
 		model.addAttribute("list", postService.findAllPosts());
-		return "postList";
+		return "redirect:/post/blogPosts";
 	}
 	
 	public String fileToString(MultipartFile file) throws IOException{
@@ -102,8 +119,8 @@ public class PostController {
 		return "postEdit";
 	}
 	
-	@RequestMapping(value="/edit", method = RequestMethod.POST)
-	public String editPost(Model model, @Valid @ModelAttribute("Post") Post post, BindingResult result,
+	@RequestMapping(value="/editAdmin", method = RequestMethod.POST)
+	public String editPostAdmin(Model model, @Valid @ModelAttribute("Post") Post post, BindingResult result,
 			@RequestParam("logo2") MultipartFile logo) throws IOException{
 				
 		if(result.hasErrors()){	
@@ -121,17 +138,45 @@ public class PostController {
 		return "postList";
 	}
 	
+	@RequestMapping(value="/edit", method = RequestMethod.POST)
+	public String editPost(Model model, @Valid @ModelAttribute("Post") Post post, BindingResult result,
+			@RequestParam("logo2") MultipartFile logo) throws IOException{
+				
+		if(result.hasErrors()){	
+			model.addAttribute("category", categoryService.findAllCategories());
+			return "postEdit";
+		}
+		
+		if(logo.getSize()==0)
+			post.setLogo(postService.findById(post.getId()).getLogo());
+		else
+			post.setLogo(fileToString(logo));  
+		
+		postService.updatePost(post);
+		model.addAttribute("employeeBtn", true );
+		model.addAttribute("post", post );
+		return "showPost";
+	}
 	
-	@RequestMapping(value="/delete", method = RequestMethod.GET)
-	public String deletePost(@RequestParam("id") Long id,  Model model){
+	
+	@RequestMapping(value="/deleteAdmin", method = RequestMethod.GET)
+	public String deleteAdminPost(@RequestParam("id") Long id,  Model model){
 		postService.deleteUser(id);
 		model.addAttribute("list", postService.findAllPosts());
 		return "postList";
 	}
 	
+	@RequestMapping(value="/delete", method = RequestMethod.GET)
+	public String deletePost(@RequestParam("id") Long id,  Model model){
+		postService.deleteUser(id);
+		model.addAttribute("list", postService.findAllPosts());
+		return "redirect:/post/blogPosts";
+	}
+	
 	@RequestMapping(value="/search", method = RequestMethod.GET)
 	public String searchPost(Model model){
 		model.addAttribute("Category", new Category());
+		model.addAttribute("UserAccount", new UserAccount());
 		model.addAttribute("category", categoryService.findAllCategories());
 		return "postSearch";
 	}
@@ -140,7 +185,7 @@ public class PostController {
 	public String searchPosts(Category category, Model model){
 		Category categoryWithPosts = categoryService.findById(category.getId());
 		model.addAttribute("list", categoryWithPosts.getPosts() );
-		return "postList";
+		return "blogPostList";
 	}
 	
 	@RequestMapping(value="/searchCity", method = RequestMethod.POST)
@@ -148,7 +193,7 @@ public class PostController {
 		
 		List<Post> list = postService.findByCity(city);
 		model.addAttribute("list", list );
-		return "postList";
+		return "blogPostList";
 	}
 	
 	@RequestMapping(value="/searchCategoryAndCity", method = RequestMethod.POST)
@@ -162,11 +207,28 @@ public class PostController {
 		}
 		else
 			model.addAttribute("list", postService.findByCategoryAndCity(category, city) );
-		return "postList";
+		return "blogPostList";
+	}
+	
+	@RequestMapping(value="/searchByUser", method = RequestMethod.POST)
+	public String searchByUser(UserAccount userAccount, Model model){
+		
+		List<Post> list = postService.findByUsername(userAccount.getUsername());
+		model = makePaginatedList(list, model, new Integer(1));
+		return "blogPostList";
+	}
+	
+	@RequestMapping(value="/userPosts", method = RequestMethod.GET)
+	public String UserPosts(Authentication authentication, Model model){
+		
+		UserAccount userAccount = userAccountService.findByUsername(authentication.getName());		
+		List<Post> list = postService.findByUsername(userAccount.getUsername());
+		model = makePaginatedList(list, model, new Integer(1));
+		return "blogPostList";
 	}
 	
 	@RequestMapping(value="/studentDetails", method = RequestMethod.GET)
-	public String studentDetails(Model model, Authentication authentication){
+	public String studentDetails(Model model, Authentication authentication, @ModelAttribute("msg") String msg){
 		UserAccount user = userAccountService.findByUsername(authentication.getName());
 		StudentDetails details = studentDetailsService.findById(user.getId());
 		if( details == null ) {
@@ -176,6 +238,7 @@ public class PostController {
 		}
 		else
 			model.addAttribute("StudentDetails", details);
+		model.addAttribute("msg", msg);
 		return "studentDetails";
 	}
 	
@@ -196,10 +259,41 @@ public class PostController {
 	}
 	
 	
+	@RequestMapping(value="/submitedJobs", method = RequestMethod.GET)
+	public String submitedJobs(Model model, Authentication authentication){
+		
+		UserAccount user = userAccountService.findByUsername(authentication.getName());
+		Set<Post> list = user.getPosts();
+		model.addAttribute("list", list );
+		return "submitedPostForStudent";
+	}
+	
 	@RequestMapping(value="/pagList", method = RequestMethod.GET)
 	public String pagList(Model model, @RequestParam(required = false) Integer page){
 		List<Post> posts = postService.findAllPosts();
-		PagedListHolder<Post> pagedListHolder = new PagedListHolder<>(posts);
+		
+/*		PagedListHolder<Post> pagedListHolder = new PagedListHolder<>(posts);
+		pagedListHolder.setPageSize(3);
+		model.addAttribute("maxPages", pagedListHolder.getPageCount() );
+		
+		if(page==null || page < 1 || page > pagedListHolder.getPageCount()) {
+			pagedListHolder.setPage(0);
+			model.addAttribute("list", pagedListHolder.getPageList());
+		}
+		else if(page <= pagedListHolder.getPageCount()) {
+            pagedListHolder.setPage(page-1);
+            model.addAttribute("list", pagedListHolder.getPageList());
+        }
+		model.addAttribute("page", page );
+*/	
+		model = makePaginatedList(posts, model, page);
+		return "paginatedPostList";
+		// https://stackoverflow.com/questions/31883643/how-do-i-add-simple-pagination-for-spring-mvc	
+	}
+	
+	public Model makePaginatedList(List<Post> list, Model model, Integer page){
+		
+		PagedListHolder<Post> pagedListHolder = new PagedListHolder<>(list);
 		pagedListHolder.setPageSize(3);
 		model.addAttribute("maxPages", pagedListHolder.getPageCount() );
 		
@@ -213,8 +307,7 @@ public class PostController {
         }
 		model.addAttribute("page", page );
 		
-		return "paginatedPostList";
-		// https://stackoverflow.com/questions/31883643/how-do-i-add-simple-pagination-for-spring-mvc	
+		return model;
 	}
 	
 	@RequestMapping(value="/pagList2", method = RequestMethod.GET, produces = "application/json")
@@ -286,15 +379,14 @@ public class PostController {
 	}
 	
 	@RequestMapping(value= "/submit", method = RequestMethod.GET)
-	public String sign(@RequestParam("id") Long id, Model model, Authentication authentication){
-		//provjera jel prijavljen već???
+	public String sign(@RequestParam("id") Long id, Model model, Authentication authentication, RedirectAttributes redirectAttrs){
 		//provjeri jel ima ispunjene detalje
 		
 		Post post = postService.findById(id);
 		UserAccount userAccount = userAccountService.findByUsername(authentication.getName());
 		
 		if(!studentDetailsService.findByUserId(userAccount.getId())){
-			model.addAttribute("msg", "Molim prvo ispunite detalje!" );
+			redirectAttrs.addAttribute("msg", "Molim ispunite detalje prije prijave na posao!" );
 			return "redirect:/post/studentDetails";
 		}
 		
