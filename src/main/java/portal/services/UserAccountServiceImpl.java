@@ -3,6 +3,7 @@ package portal.services;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import portal.model.UserAccount;
@@ -15,14 +16,18 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@Autowired
 	UserAccountRepository userAccountRepository;
 	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
 	@Override
 	public List<UserAccount> findAllUsers() {
 		return userAccountRepository.findAll();
 	}
 
 	@Override
-	public void saveUser(UserAccount user) {
-		userAccountRepository.save(user);		
+	public void saveUser(UserAccount userAccount) {
+		userAccount.setPassword(passwordEncoder.encode(userAccount.getPassword()));
+		userAccountRepository.save(userAccount);		
 	}
 
 	@Override
@@ -32,6 +37,13 @@ public class UserAccountServiceImpl implements UserAccountService {
 
 	@Override
 	public void updateUser(UserAccount userAccount) {
+		if(userAccount.getPassword()==null) {
+			userAccount.setPassword(userAccountRepository.findById(userAccount.getId()).getPassword());
+		}
+		else {
+			userAccount.setPassword(passwordEncoder.encode(userAccount.getPassword()));
+		}
+		userAccount.setRole(userAccountRepository.findById(userAccount.getId()).getRole());
 		userAccountRepository.save(userAccount);	
 	}
 
@@ -55,10 +67,15 @@ public class UserAccountServiceImpl implements UserAccountService {
 		
 		UserAccount novi = new UserAccount();
 		novi.setUsername(userDto.getUsername());
-		novi.setPassword(userDto.getPassword());
+		novi.setPassword(passwordEncoder.encode(userDto.getPassword()));
 		novi.setEmail(userDto.getEmail());
 		
 		return userAccountRepository.save(novi);
+	}
+	
+	@Override
+	public void saveUserRole(UserAccount userAccount) {
+		userAccountRepository.save(userAccount);		
 	}
 
 }

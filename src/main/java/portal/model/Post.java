@@ -100,7 +100,7 @@ public class Post {
 	}
 	
 	@ManyToMany(fetch = FetchType.EAGER)
-	@Cascade({CascadeType.ALL})
+	@Cascade({CascadeType.SAVE_UPDATE})
 	@JoinTable(name="post_submit", 
 			joinColumns= {@JoinColumn(name="postId", nullable = false, updatable=false) },
 			inverseJoinColumns = { @JoinColumn(name="userId", nullable=false, updatable=false) }

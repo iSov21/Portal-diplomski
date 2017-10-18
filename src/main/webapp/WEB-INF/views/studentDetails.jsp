@@ -8,7 +8,7 @@
 	
 	<div class="container login-container container-blog">
 	<div>${msg}</div>
-	<form:form id="detailsForm" method="post" action="studentDetails" modelAttribute="StudentDetails" class="form" enctype="multipart/form-data">
+	<form:form id="detailsForm" method="post" action="${pageContext.request.contextPath}/user/studentDetails" modelAttribute="StudentDetails" class="form" enctype="multipart/form-data">
 			
 		<div class="input-group" style="display:none;">
 			<label class="input-group-addon" for="userId"><i class="fa fa-user"></i></label> 
@@ -43,17 +43,5 @@
 		</div>
 	</form:form>
  	</div>
- 	
- 	<div class="container login-container container-blog">
- 	<form:form id="detailsForm" method="post" action="fileUpload" class="form" enctype="multipart/form-data">
-		 <div class="input-group">
-			<label for="file">File:</label> 
-			<input id="file" type="file" name="file" />
-		</div>
-		
-		<div class="form-actions">
-			<input type="submit" value="File" class="btn btn-block btn-primary btn-default" />
-		</div>
-	</form:form>
-	</div>
+
 <%@ include file="/WEB-INF/views/template/footer.jsp"%>

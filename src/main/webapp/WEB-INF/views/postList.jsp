@@ -12,7 +12,7 @@
 		<div>
      		<a class="btn btn-default" href="<c:url value='/post/add' />">Novi post</a>
      		<a id="editBtn" class="btn btn-default disabled" href="<c:url value='/post/edit' />">Uredi odabrani post</a>
-     		<a id="deleteBtn" class="btn btn-default disabled" onClick="return confirm('Sigurno želite izbrisati post?')" href="<c:url value='/post/delete'/>">Obriši odabrani post</a>	
+     		<a id="deleteBtn" class="btn btn-default disabled" onClick="return confirm('Sigurno želite izbrisati post?')" href="<c:url value='/post/delete'/>">Obriši odabrani post</a>
     	</div>
 	<div class="panel-title"><span class="lead">Lista postova</span></div>
 	<table class="table table-hover table-bordered table-sm" id="postTable">

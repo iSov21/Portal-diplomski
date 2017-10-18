@@ -30,9 +30,11 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public void updatePost(Post post) {
-		post.setCreated(postRepository.findById(post.getId()).getCreated());
-		postRepository.save(post);	
+	public void updatePost(Post postVO) {
+		Post post = postRepository.findById(postVO.getId());
+		postVO.setCreated(post.getCreated());
+		postVO.setSubmited(post.getSubmited());
+		postRepository.save(postVO);	
 	}
 
 	@Override
@@ -63,6 +65,12 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public List<Post> findByUsername(String username) {
 		return postRepository.findByUsername(username);
+	}
+
+	@Override
+	public void addSubmited(Post post) {
+		postRepository.save(post);
+		
 	}
 	
 

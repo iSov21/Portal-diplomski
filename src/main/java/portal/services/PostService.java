@@ -25,5 +25,7 @@ public interface PostService {
 
 	public List<Post> findByUsername(String username);
 
+	public void addSubmited(Post post);
+
 	
 }

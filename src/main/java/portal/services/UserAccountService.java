@@ -21,4 +21,6 @@ public interface UserAccountService {
 	public UserAccount findById(Long id);
 
 	public UserAccount register(UserDto userDto);
+
+	void saveUserRole(UserAccount userAccount);
 }

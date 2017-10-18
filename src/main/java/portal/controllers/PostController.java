@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -31,10 +32,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import portal.model.Category;
 import portal.model.Post;
 import portal.model.StudentDetails;
-import portal.model.UploadFile;
 import portal.model.UserAccount;
-import portal.repositories.FileRepository;
 import portal.services.CategoryService;
+import portal.services.EmployerDetailsService;
 import portal.services.PostService;
 import portal.services.StudentDetailsService;
 import portal.services.UserAccountService;
@@ -57,10 +57,10 @@ public class PostController {
 	StudentDetailsService studentDetailsService;
 	
 	@Autowired
-	FileRepository fileRepository;
+	EmployerDetailsService employerDetailsService;
 	
 	
-	@RequestMapping(value= {"","/list"}, method = RequestMethod.GET)
+	@RequestMapping(value="/list", method = RequestMethod.GET)
 	public String list(Model model){
 		List<Post> posts = postService.findAllPosts();
 		model.addAttribute("list", posts );
@@ -68,41 +68,38 @@ public class PostController {
 	}
 	
 	@RequestMapping(value="/add", method = RequestMethod.GET)
-	public String add(Model model){
+	public String add(Model model, Authentication authentication, RedirectAttributes redirectAttrs){
+		
+		UserAccount userAccount = userAccountService.findByUsername(authentication.getName());
+		
+		if(!employerDetailsService.findByUserId(userAccount.getId())){
+			redirectAttrs.addAttribute("msg", "Molim ispunite detalje prije objavljivanja posta!" );
+			return "redirect:/user/employerDetails";
+		}
+		
 		model.addAttribute("Post", new Post());
 		model.addAttribute("category", categoryService.findAllCategories());
 		return "postAdd";
 	}
 	
-	@RequestMapping(value="/addAdmin", method = RequestMethod.POST)
-	public String addUserAdmin(Model model, @Valid @ModelAttribute("Post") Post post, BindingResult result, 
-			@RequestParam("logo2") MultipartFile logo) throws IOException{
-		
-		if(result.hasErrors()){	
-			model.addAttribute("category", categoryService.findAllCategories());
-			return "postAdd";
-		}
-
-	    post.setLogo(fileToString(logo));   
-	   
-		postService.savePost(post);
-		model.addAttribute("list", postService.findAllPosts());
-		return "postList";
-	}
 	
 	@RequestMapping(value="/add", method = RequestMethod.POST)
-	public String addUser(Model model, @Valid @ModelAttribute("Post") Post post, BindingResult result, 
-			@RequestParam("logo2") MultipartFile logo) throws IOException{
+	public String addPost(Model model, @Valid @ModelAttribute("Post") Post post, BindingResult result, 
+			@RequestParam("logo2") MultipartFile logo, HttpServletRequest request) throws IOException{
 		
 		if(result.hasErrors()){	
 			model.addAttribute("category", categoryService.findAllCategories());
 			return "postAdd";
 		}
-
+		
 	    post.setLogo(fileToString(logo));   
 	   
 		postService.savePost(post);
 		model.addAttribute("list", postService.findAllPosts());
+		
+		if(request.isUserInRole("ADMIN")) {
+			return "postList";
+		}
 		return "redirect:/post/blogPosts";
 	}
 	
@@ -117,59 +114,43 @@ public class PostController {
 		model.addAttribute("Post", postService.findById(id));
 		model.addAttribute("category", categoryService.findAllCategories());
 		return "postEdit";
-	}
-	
-	@RequestMapping(value="/editAdmin", method = RequestMethod.POST)
-	public String editPostAdmin(Model model, @Valid @ModelAttribute("Post") Post post, BindingResult result,
-			@RequestParam("logo2") MultipartFile logo) throws IOException{
-				
-		if(result.hasErrors()){	
-			model.addAttribute("category", categoryService.findAllCategories());
-			return "postEdit";
-		}
-		
-		if(logo.getSize()==0)
-			post.setLogo(postService.findById(post.getId()).getLogo());
-		else
-			post.setLogo(fileToString(logo));  
-		
-		postService.updatePost(post);
-		model.addAttribute("list", postService.findAllPosts());
-		return "postList";
-	}
+	}	
 	
 	@RequestMapping(value="/edit", method = RequestMethod.POST)
 	public String editPost(Model model, @Valid @ModelAttribute("Post") Post post, BindingResult result,
-			@RequestParam("logo2") MultipartFile logo) throws IOException{
+			@RequestParam("logo2") MultipartFile logo, HttpServletRequest request) throws IOException{
 				
 		if(result.hasErrors()){	
 			model.addAttribute("category", categoryService.findAllCategories());
 			return "postEdit";
 		}
 		
-		if(logo.getSize()==0)
+		if(logo.getSize()==0) {
 			post.setLogo(postService.findById(post.getId()).getLogo());
-		else
+		}
+		else {			
 			post.setLogo(fileToString(logo));  
-		
+		}
 		postService.updatePost(post);
-		model.addAttribute("employeeBtn", true );
+		
+		if(request.isUserInRole("ADMIN")) {
+			model.addAttribute("list", postService.findAllPosts());
+			return "postList";
+		}
+
+		model.addAttribute("employerBtn", true );
 		model.addAttribute("post", post );
 		return "showPost";
-	}
-	
-	
-	@RequestMapping(value="/deleteAdmin", method = RequestMethod.GET)
-	public String deleteAdminPost(@RequestParam("id") Long id,  Model model){
-		postService.deleteUser(id);
-		model.addAttribute("list", postService.findAllPosts());
-		return "postList";
-	}
+	}	
 	
 	@RequestMapping(value="/delete", method = RequestMethod.GET)
-	public String deletePost(@RequestParam("id") Long id,  Model model){
+	public String deletePost(@RequestParam("id") Long id,  Model model, HttpServletRequest request){
 		postService.deleteUser(id);
 		model.addAttribute("list", postService.findAllPosts());
+		
+		if(request.isUserInRole("ADMIN")) {
+			return "postList";
+		}
 		return "redirect:/post/blogPosts";
 	}
 	
@@ -181,115 +162,63 @@ public class PostController {
 		return "postSearch";
 	}
 	
-	@RequestMapping(value="/search", method = RequestMethod.POST)
-	public String searchPosts(Category category, Model model){
-		Category categoryWithPosts = categoryService.findById(category.getId());
-		model.addAttribute("list", categoryWithPosts.getPosts() );
-		return "blogPostList";
-	}
-	
-	@RequestMapping(value="/searchCity", method = RequestMethod.POST)
-	public String searchCity(String city, Model model){
-		
-		List<Post> list = postService.findByCity(city);
-		model.addAttribute("list", list );
-		return "blogPostList";
-	}
-	
-	@RequestMapping(value="/searchCategoryAndCity", method = RequestMethod.POST)
-	public String searchCategoryAndCity(Category category, String city, Model model){
-		
-		if(category.getId() == null)
-			model.addAttribute("list", postService.findByCity(city) );
-		else if(city.equals("") ) {
-			Category categoryWithPosts = categoryService.findById(category.getId());
-			model.addAttribute("list", categoryWithPosts.getPosts() );
+	@RequestMapping(value="/searchByCategoryAndCity", method = RequestMethod.GET)
+	public String searchByCategoryAndCity(Long categoryId, String city, Model model, @RequestParam(required = false) Integer page){
+			
+		if(categoryId == null) {
+			List<Post> list = postService.findByCity(city);
+			model = makePaginatedList(list, model, page);		
 		}
-		else
-			model.addAttribute("list", postService.findByCategoryAndCity(category, city) );
-		return "blogPostList";
+		else if(city.equals("") ) {
+			Category category = categoryService.findById(categoryId);
+			Category categoryWithPosts = categoryService.findById(category.getId());
+			List<Post> list = categoryWithPosts.getPosts();
+			model = makePaginatedList( list, model, page);
+		}
+		else {
+			Category category = categoryService.findById(categoryId);
+			List<Post> list = postService.findByCategoryAndCity(category, city);
+			model = makePaginatedList(list, model, page);
+		}
+		model.addAttribute("categoryId", categoryId);
+		model.addAttribute("city", city);
+		model.addAttribute("cSearch", true);
+		return "searchBlogPostList";
 	}
 	
-	@RequestMapping(value="/searchByUser", method = RequestMethod.POST)
-	public String searchByUser(UserAccount userAccount, Model model){
+	@RequestMapping(value="/searchByUser", method = RequestMethod.GET)
+	public String searchByUser(String username, Model model, @RequestParam(required = false) Integer page){
 		
-		List<Post> list = postService.findByUsername(userAccount.getUsername());
-		model = makePaginatedList(list, model, new Integer(1));
-		return "blogPostList";
+		List<Post> list = postService.findByUsername(username);
+		model = makePaginatedList(list, model, page);
+		model.addAttribute("username", username);
+		model.addAttribute("userSearch", true);
+		return "searchBlogPostList";
 	}
 	
-	@RequestMapping(value="/userPosts", method = RequestMethod.GET)
-	public String UserPosts(Authentication authentication, Model model){
+	
+	@RequestMapping(value="/postsByUser", method = RequestMethod.GET)
+	public String postsByUser(Authentication authentication, Model model){
 		
 		UserAccount userAccount = userAccountService.findByUsername(authentication.getName());		
 		List<Post> list = postService.findByUsername(userAccount.getUsername());
 		model = makePaginatedList(list, model, new Integer(1));
+		model.addAttribute("filter", true);
 		return "blogPostList";
-	}
-	
-	@RequestMapping(value="/studentDetails", method = RequestMethod.GET)
-	public String studentDetails(Model model, Authentication authentication, @ModelAttribute("msg") String msg){
-		UserAccount user = userAccountService.findByUsername(authentication.getName());
-		StudentDetails details = studentDetailsService.findById(user.getId());
-		if( details == null ) {
-			StudentDetails newDetails = new StudentDetails();
-			newDetails.setUserId(user.getId());
-			model.addAttribute("StudentDetails", newDetails);
-		}
-		else
-			model.addAttribute("StudentDetails", details);
-		model.addAttribute("msg", msg);
-		return "studentDetails";
-	}
-	
-	@RequestMapping(value="/studentDetails", method = RequestMethod.POST)
-	public String saveDetails(Model model, @ModelAttribute("StudentDetails") StudentDetails studentDetails, 
-			@RequestParam("cv2") MultipartFile file) throws Exception{
-		
-		if(file.getSize()==0)
-			studentDetails.setCv(studentDetailsService.findById(studentDetails.getUserId()).getCv());
-		else
-			studentDetails.setCv(file.getBytes());
-		
-		studentDetailsService.saveDetails(studentDetails);
-		model.addAttribute("StudentDetails", studentDetails);
-		model.addAttribute("msg", "Detalji spremljeni");
-	
-		return "studentDetails";
-	}
+	}	
 	
 	
 	@RequestMapping(value="/submitedJobs", method = RequestMethod.GET)
 	public String submitedJobs(Model model, Authentication authentication){
 		
 		UserAccount user = userAccountService.findByUsername(authentication.getName());
-		Set<Post> list = user.getPosts();
-		model.addAttribute("list", list );
-		return "submitedPostForStudent";
-	}
-	
-	@RequestMapping(value="/pagList", method = RequestMethod.GET)
-	public String pagList(Model model, @RequestParam(required = false) Integer page){
-		List<Post> posts = postService.findAllPosts();
+		List<Post> list = user.getPosts();		
+		model = makePaginatedList(list, model, new Integer(1));
+		model.addAttribute("filter", true);
 		
-/*		PagedListHolder<Post> pagedListHolder = new PagedListHolder<>(posts);
-		pagedListHolder.setPageSize(3);
-		model.addAttribute("maxPages", pagedListHolder.getPageCount() );
-		
-		if(page==null || page < 1 || page > pagedListHolder.getPageCount()) {
-			pagedListHolder.setPage(0);
-			model.addAttribute("list", pagedListHolder.getPageList());
-		}
-		else if(page <= pagedListHolder.getPageCount()) {
-            pagedListHolder.setPage(page-1);
-            model.addAttribute("list", pagedListHolder.getPageList());
-        }
-		model.addAttribute("page", page );
-*/	
-		model = makePaginatedList(posts, model, page);
-		return "paginatedPostList";
-		// https://stackoverflow.com/questions/31883643/how-do-i-add-simple-pagination-for-spring-mvc	
+		return "blogPostList";
 	}
+
 	
 	public Model makePaginatedList(List<Post> list, Model model, Integer page){
 		
@@ -305,62 +234,45 @@ public class PostController {
             pagedListHolder.setPage(page-1);
             model.addAttribute("list", pagedListHolder.getPageList());
         }
+		
+		//kratki tekst za prikaz
+		for(Post post : pagedListHolder.getPageList()) {
+			post.setText(post.getText().substring(0, 10)+"...");
+		}
 		model.addAttribute("page", page );
 		
 		return model;
 	}
 	
-	@RequestMapping(value="/pagList2", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody List<Post> pagList2(Model model, @RequestParam(required = false) Integer page){
-		List<Post> posts = postService.findAllPosts();
-		PagedListHolder<Post> pagedListHolder = new PagedListHolder<>(posts);
-		pagedListHolder.setPageSize(3);
-		model.addAttribute("maxPages", pagedListHolder.getPageCount() );
-		
-		if(page==null || page < 1 || page > pagedListHolder.getPageCount()) {
-			pagedListHolder.setPage(0);
-			model.addAttribute("list", pagedListHolder.getPageList());
-		}
-		else if(page <= pagedListHolder.getPageCount()) {
-            pagedListHolder.setPage(page-1);
-            model.addAttribute("list", pagedListHolder.getPageList());
-        }
-		model.addAttribute("page", page );
-		
-		return pagedListHolder.getPageList();
-		// https://stackoverflow.com/questions/31883643/how-do-i-add-simple-pagination-for-spring-mvc	
-	}
-	
-	@RequestMapping(value="/pagList22", method = RequestMethod.GET, produces = "application/json")
-	public String pagList22(Model model, @RequestParam(required = false) Integer page){
-		return "paginatedPostList2";
-	}
+
 	
 	@RequestMapping(value= "/blogPosts", method = RequestMethod.GET)
-	public String listPosts(Model model, @RequestParam(required = false) Integer page){
-		List<Post> posts = postService.findAllPosts();
-		PagedListHolder<Post> pagedListHolder = new PagedListHolder<>(posts);
-		pagedListHolder.setPageSize(3);
-		model.addAttribute("maxPages", pagedListHolder.getPageCount() );
-		
-		if(page==null || page < 1 || page > pagedListHolder.getPageCount()) {
-			pagedListHolder.setPage(0);
-			model.addAttribute("list", pagedListHolder.getPageList());
+	public String listPosts(Model model, @RequestParam(required = false) Integer page, 
+			@RequestParam(required = false) Boolean filter, Authentication authentication, HttpServletRequest request ){
+		List<Post> posts;
+		if( filter == null || filter == false ) {
+			posts = postService.findAllPosts();
+			model = makePaginatedList(posts, model, page);
+			model.addAttribute("filter", false);
 		}
-		else if(page <= pagedListHolder.getPageCount()) {
-            pagedListHolder.setPage(page-1);
-            model.addAttribute("list", pagedListHolder.getPageList());
-        }
-		//kratki tekst za prikaz
-		for(Post post : pagedListHolder.getPageList()) {
-			post.setText(post.getText().substring(0, 10)+"...");
-		}
-		
-		model.addAttribute("page", page );
+		else {
+				UserAccount userAccount = userAccountService.findByUsername(authentication.getName());
+				if( request.isUserInRole("POSLODAVAC") ) {
+					posts = postService.findByUsername(userAccount.getUsername());
+					model = makePaginatedList(posts, model, page);
+					model.addAttribute("filter", true);
+				}
+				else { //student
+					posts = postService.findByUsername(userAccount.getUsername());
+					model = makePaginatedList(posts, model, page);
+					model.addAttribute("filter", true);
+				}
+			
+		}				
 		return "blogPostList";
 	}
 	
-	@RequestMapping(value= "/show", method = RequestMethod.GET)
+	@RequestMapping(value= "/showPost", method = RequestMethod.GET)
 	public String showPost(@RequestParam("id") Long id, Model model, Authentication authentication) 
 			throws UnsupportedEncodingException{
 		
@@ -370,8 +282,10 @@ public class PostController {
 			userAccount = userAccountService.findByUsername(authentication.getName());
 			model.addAttribute("submited", post.getSubmited().contains(userAccount) );
 			
-			if( userAccount.getUsername().equals(post.getUsername()) ) 
-				model.addAttribute("employeeBtn", true );
+			if( userAccount.getUsername().equals(post.getUsername()) ) { 
+				model.addAttribute("employerBtn", true );
+				model.addAttribute("count", post.getSubmited().size());
+			}
 		}
 		
 		model.addAttribute("post", post );
@@ -380,19 +294,18 @@ public class PostController {
 	
 	@RequestMapping(value= "/submit", method = RequestMethod.GET)
 	public String sign(@RequestParam("id") Long id, Model model, Authentication authentication, RedirectAttributes redirectAttrs){
-		//provjeri jel ima ispunjene detalje
 		
 		Post post = postService.findById(id);
 		UserAccount userAccount = userAccountService.findByUsername(authentication.getName());
 		
 		if(!studentDetailsService.findByUserId(userAccount.getId())){
 			redirectAttrs.addAttribute("msg", "Molim ispunite detalje prije prijave na posao!" );
-			return "redirect:/post/studentDetails";
+			return "redirect:/user/studentDetails";
 		}
 		
 		if(!post.getSubmited().contains(userAccount)) {
 			post.getSubmited().add(userAccount);
-			postService.updatePost(post);
+			postService.addSubmited(post);
 		}
 		else{
 			model.addAttribute("error", "Već ste se prijavili na ovaj oglas" );
@@ -406,25 +319,6 @@ public class PostController {
 		return "showPost";
 	}
 	
-	
-	@RequestMapping(value = "/fileUpload", method = RequestMethod.POST)
-	public String submit(@RequestParam("file") MultipartFile file, Model model) throws Exception {
-		UploadFile uploadFile = new UploadFile();
-		uploadFile.setFileName(file.getOriginalFilename());
-        uploadFile.setData(file.getBytes());
-        fileRepository.save(uploadFile);
-	    model.addAttribute("file", file);
-	    
-	    byte[] encodeBase64 = Base64.getEncoder().encode(file.getBytes());
-	    String base64Encoded = new String(encodeBase64, "UTF-8");
-	    model.addAttribute("base",base64Encoded);
-	    model.addAttribute("encode",Base64.getEncoder().encode(file.getBytes()));
-	    model.addAttribute("decode",Base64.getDecoder().decode(Base64.getEncoder().encode(file.getBytes())));
-	    model.addAttribute("image",file.getBytes());
-	    
-	    
-	    return "fileUploadView";
-	}
 	
 	@ResponseBody
 	@RequestMapping(value = "/download", produces = MediaType.APPLICATION_PDF_VALUE)

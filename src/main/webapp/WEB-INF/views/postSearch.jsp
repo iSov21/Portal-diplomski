@@ -3,35 +3,24 @@
 <%@ include file="/WEB-INF/views/template/header.jsp"%>
 
 
-	<h1>Pretraživanje postova</h1>
-	
-	<div class="container login-container">
-	<form:form id="searchForm" method="post" action="search" modelAttribute="Category" class="form">
+	<h1>Pretraživanje oglasa</h1>
+ 	
+ 	<div class="container login-container">
+	<form id="searchForm" method="get" action="searchByCategoryAndCity" class="form">
 		
-		<label for="id">Pretraži po kategoriji:</label>
+		<label>Pretraži po kategoriji i gradu:</label>
 		
 		<div class="input-group">
-			<form:select id="id" name="id" path="id" items="${category}" itemLabel="name" itemValue="id"/><br>
-<!--  		<div class="input-group-btn">
- 			<button type="submit" class="input-group-addon"><i class="fa fa-search"></i></button> 
- 			</div> -->
+			<select id="categoryId" name="categoryId">
+				<option value=""/>
+				<c:forEach var="categ" items="${category}">
+   					<option value="${categ.id}">${categ.name}</option>
+   				</c:forEach>
+			</select>
  			<label class="input-group-addon" for="id"><i class="fa fa-search"></i></label>
  		</div>	
  		
-		<div class="form-actions">
-			<input type="submit" value="Pretraži" class="btn btn-block btn-primary btn-default" />
-			
-		</div>
-	</form:form>
- 	</div>
- 	
- 	<div class="container login-container">
-	<form id="searchCityForm" method="post" action="searchCity" class="form">
-		
-		<label for="id">Pretraži po gradu:</label>
-		
-		<div class="input-group">
-			<label class="input-group-addon" for="id"><i class="fa fa-search"></i></label>
+ 		<div class="input-group">
 			<input id="city" name="city" type="text" placeholder="Grad" class="form-control"/><br>	
  		</div>	
  		
@@ -43,43 +32,19 @@
  	</div>
  	
  	<div class="container login-container">
-	<form:form id="searchForm" method="post" action="searchCategoryAndCity" modelAttribute="Category" class="form">
-		
-		<label>Pretraži po kategoriji i gradu:</label>
-		
-		<div class="input-group">
-			<form:select id="id" name="id" path="id">
-				<form:option value="" />
-   				<form:options items="${category}" itemLabel="name" itemValue="id"/>
-			</form:select>
- 			<label class="input-group-addon" for="id"><i class="fa fa-search"></i></label>
- 		</div>	
- 		
- 		<div class="input-group">
-			<input id="city" name="city" type="text" placeholder="Grad" class="form-control"/><br>	
- 		</div>	
- 		
-		<div class="form-actions">
-			<input type="submit" value="Pretraži" class="btn btn-block btn-primary btn-default" />
-			
-		</div>
-	</form:form>
- 	</div>
- 	
- 	<div class="container login-container">
-	<form:form id="searchForm" method="post" action="searchByUser" modelAttribute="UserAccount" class="form">
+	<form id="searchForm" method="get" action="searchByUser" class="form">
 		
 		<label>Pretraži po korisniku:</label>	
  		
  		<div class="input-group">
-			<form:input id="username" name="username" path="username" type="text" placeholder="Korisničko ime" class="form-control"/><br>	
+			<input id="username" name="username" type="text" placeholder="Korisničko ime" class="form-control"/><br>	
  		</div>	
  		
 		<div class="form-actions">
 			<input type="submit" value="Pretraži" class="btn btn-block btn-primary btn-default" />
 			
 		</div>
-	</form:form>
+	</form>
  	</div>
 
 <%@ include file="/WEB-INF/views/template/footer.jsp"%>

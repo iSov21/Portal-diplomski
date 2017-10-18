@@ -29,18 +29,29 @@
 			</div>
 			</c:forEach>
 			
-		<nav>
-			<ul class="pagination pagination-circle justify-content-center pg-teal">	
-				<c:url value="/post/blogPosts" var="prev">
-					<c:param name="page" value="${page-1}"/>
-					<c:param name="filter" value="${filter}"/>
-				</c:url>
+		<nav>		
+			<ul class="pagination pagination-circle justify-content-center pg-teal">
+			<c:choose>	
+				<c:when test="${cSearch}">
+					<c:url value="/post/searchByCategoryAndCity" var="prev">
+						<c:param name="page" value="${page-1}"/>
+						<c:param name="categoryId" value="${categoryId}"/>
+						<c:param name="city" value="${city}"/>
+					</c:url>
+				</c:when>
+				<c:otherwise>
+        			<c:url value="/post/searchByUser" var="prev">
+						<c:param name="page" value="${page-1}"/>
+						<c:param name="username" value="${username}"/>
+					</c:url>
+   				</c:otherwise>
+			</c:choose>
 				<c:choose>
 					<c:when test="${page > 1}">
 						<li class="page-item"><a class="page-link" href="<c:out value="${prev}" />">«</a></li>
 					</c:when>
 					<c:otherwise>
-			       		<li class="page-item disabled"><a class="page-link" href="<c:out value="${prev}" />">«</a></li>
+			       		<li class="page-item disabled"><a class="page-link disabled" href="<c:out value="${prev}" />">«</a></li>
 			    	</c:otherwise>
 				</c:choose>
 				   
@@ -50,25 +61,49 @@
 							<li class="page-item active"><span class="page-link">${i.index}</span></li>
 						</c:when>
 						<c:otherwise>
-				    		<c:url value="/post/blogPosts" var="url">
-				   				<c:param name="page" value="${i.index}"/>
-				   				<c:param name="filter" value="${filter}"/>
-				         	</c:url>
+							<c:choose>	
+								<c:when test="${cSearch}">
+									<c:url value="/post/searchByCategoryAndCity" var="url">
+										<c:param name="page" value="${i.index}"/>
+										<c:param name="categoryId" value="${categoryId}"/>
+										<c:param name="city" value="${city}"/>
+									</c:url>
+								</c:when>
+								<c:otherwise>
+				        			<c:url value="/post/searchByUser" var="url">
+						   				<c:param name="page" value="${i.index}"/>
+						   				<c:param name="username" value="${username}"/>
+						         	</c:url>
+				   				</c:otherwise>
+							</c:choose>
+						
 				     		<li class="page-item"><a class="page-link" href='<c:out value="${url}" />'>${i.index}</a></li>
 				  		</c:otherwise>
 					</c:choose>
 		   		</c:forEach>
-		    
-				<c:url value="/post/blogPosts" var="next">
-					<c:param name="page" value="${page + 1}"/>
-					<c:param name="filter" value="${filter}"/>
-				</c:url>
+		    			
+				<c:choose>	
+					<c:when test="${cSearch}">
+						<c:url value="/post/searchByCategoryAndCity" var="next">
+							<c:param name="page" value="${page+1}"/>
+							<c:param name="categoryId" value="${categoryId}"/>
+							<c:param name="city" value="${city}"/>
+						</c:url>
+					</c:when>
+					<c:otherwise>
+	        			<c:url value="/post/searchByUser" var="next">
+							<c:param name="page" value="${page+1}"/>
+							<c:param name="username" value="${username}"/>
+						</c:url>
+	   				</c:otherwise>
+				</c:choose>
+				
 				<c:choose>
 					<c:when test="${page + 1 <= maxPages}">
 						<li class="page-item"><a class="page-link" href='<c:out value="${next}" />'>»</a></li>
 					</c:when>
 					<c:otherwise>
-			       		<li class="page-item disabled"><a class="page-link" href='<c:out value="${next}" />'>»</a></li>
+			       		<li class="page-item disabled"><a class="page-link disabled" href='<c:out value="${next}" />'>»</a></li>
 			    	</c:otherwise>
 				</c:choose>
 			</ul>

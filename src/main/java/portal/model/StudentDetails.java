@@ -7,7 +7,7 @@ import javax.persistence.Table;
 
 
 @Entity
-@Table(name = "details")
+@Table(name = "student_details")
 public class StudentDetails {
 
 	@Id
@@ -48,7 +48,5 @@ public class StudentDetails {
 	public void setCv(byte[] cv) {
 		this.cv = cv;
 	}
-	
-
-	
+		
 }

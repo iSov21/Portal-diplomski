@@ -14,11 +14,11 @@
 			<form:input id="id" name="id" path="id" type="text" placeholder="id" class="form-control"/><br>
 		</div>
 			
-		<div class="input-group">
+ 		<div class="input-group">
 			<label class="input-group-addon" for="username"><i class="fa fa-user"></i></label>
-			<form:input id="username" name="username" path="username" type="text" placeholder="korisničko ime" class="form-control"/><br>
-		</div>
-		<form:errors path="username" cssClass="error" style="color: #FF0000"/>
+			<form:input readonly="true" id="username" name="username" path="username" type="text" placeholder="korisničko ime" class="form-control" 
+			 value="${logged}" /><br>
+		</div> 
 		
 		<div class="input-group">
 			<label class="input-group-addon" for="category"><i class="fa fa-clone"></i></label> 

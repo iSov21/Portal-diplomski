@@ -1,7 +1,7 @@
 package portal.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,7 +22,7 @@ public class Category {
 
 	private Long id;
 	private String name;
-	private Set<Post> posts = new HashSet<>();
+	private List<Post> posts = new ArrayList<>();
 	
 	public Category() {
 	}
@@ -51,11 +51,11 @@ public class Category {
 	
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "category")
 	@JsonBackReference
-	public Set<Post> getPosts() {
+	public List<Post> getPosts() {
 		return posts;
 	}
 
-	public void setPosts(Set<Post> posts) {
+	public void setPosts(List<Post> posts) {
 		this.posts = posts;
 	}
 	

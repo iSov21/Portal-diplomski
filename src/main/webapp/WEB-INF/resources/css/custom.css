@@ -93,6 +93,21 @@ body {
   -moz-box-sizing: border-box;
 }
 
+ .login-container input[type=date] {
+  height: 44px;
+  font-size: 16px;
+  width: 100%;
+  margin: 0px;
+  -webkit-appearance: none;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-top: 1px solid #c0c0c0;
+  border-radius: 2px;
+  padding: 0 8px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
  .login-container textarea {
  	background: #fff;
  	height: 100px;
@@ -108,6 +123,11 @@ body {
 }
 
 a.disabled {
+   pointer-events: none;
+   cursor: default;
+}
+
+li.disabled {
    pointer-events: none;
    cursor: default;
 }

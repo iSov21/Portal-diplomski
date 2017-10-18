@@ -49,7 +49,7 @@
 		
 		<div class="input-group">
 			<label class="input-group-addon" for="text"><i class="fa fa-align-center "></i></label> 
-			<form:input id="text" name="text" path="text" type="text" placeholder="tekst" rows="5"/><br>
+			<form:input id="text" name="text" path="text" type="text" placeholder="tekst"/><br>
 		</div>
 		
 		<div class="input-group">

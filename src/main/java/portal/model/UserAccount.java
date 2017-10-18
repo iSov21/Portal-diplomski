@@ -1,7 +1,8 @@
 package portal.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,7 +31,7 @@ public class UserAccount {
 	private String password;
 	private String email;
 	private Role role;
-	private Set<Post> posts = new HashSet<>();
+	private List<Post> posts = new ArrayList<>();
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -78,10 +79,10 @@ public class UserAccount {
 	}
 	
 	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "submited")
-	public Set<Post> getPosts() {
+	public List<Post> getPosts() {
 		return posts;
 	}
-	public void setPosts(Set<Post> posts) {
+	public void setPosts(List<Post> posts) {
 		this.posts = posts;
 	}
 	
