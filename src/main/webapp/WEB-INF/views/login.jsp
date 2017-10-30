@@ -10,14 +10,14 @@
 	<div class="login-form">
 	<form:form id="loginForm" method="post" action="login" modelAttribute="UserAccount">
 		
+		<div>${msg}</div>
+		
 		<div class="input-group">
-			<%-- <form:label path="username">Unesite korisničko ime</form:label> --%>
 			<label class="input-group-addon" for="username"><i class="fa fa-user"></i></label>
 			<form:input id="username" name="username" path="username" type="text" placeholder="korisničko ime" class="form-control"/><br>
 		</div>
 		
 		<div class="input-group">
-			<%-- <form:label path="password">Unesite lozinku:</form:label> --%>
 			<label class="input-group-addon" for="password"><i class="fa fa-lock"></i></label> 
 			<form:password id="password" name="password" path="password" placeholder="lozinka" class="form-control"/><br>
 		</div>

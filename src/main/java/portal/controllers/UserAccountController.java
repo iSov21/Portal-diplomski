@@ -1,8 +1,11 @@
 package portal.controllers;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,8 +42,10 @@ public class UserAccountController {
 	RoleRepository roleRepository;
 	
 	@RequestMapping(value= {"","/list"}, method = RequestMethod.GET)
-	public String list(Model model){
-		model.addAttribute("list", userAccountService.findAllUsers());
+	public String list(Model model, @RequestParam(required = false) Integer page){
+		List<UserAccount> list = userAccountService.findAllUsers();
+		
+		model = makePaginatedList(list, model, page, 6);
 		return "userList";
 	}
 	
@@ -181,5 +186,25 @@ public class UserAccountController {
 		userAccount.setRole(roleRepository.findById(role.getId()));
 		userAccountService.saveUserRole(userAccount);
 		return "redirect:/user/list";
+	}
+	
+	public Model makePaginatedList(List<UserAccount> list, Model model, Integer page, int size){
+		
+		PagedListHolder<UserAccount> pagedListHolder = new PagedListHolder<>(list);
+		pagedListHolder.setPageSize(size);
+		model.addAttribute("maxPages", pagedListHolder.getPageCount() );
+		
+		if(page==null || page < 1 || page > pagedListHolder.getPageCount()) {
+			pagedListHolder.setPage(0);
+			model.addAttribute("list", pagedListHolder.getPageList());
+		}
+		else if(page <= pagedListHolder.getPageCount()) {
+            pagedListHolder.setPage(page-1);
+            model.addAttribute("list", pagedListHolder.getPageList());
+        }
+
+		model.addAttribute("page", page );
+		
+		return model;
 	}
 }

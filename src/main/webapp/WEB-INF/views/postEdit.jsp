@@ -16,8 +16,7 @@
 			
  		<div class="input-group">
 			<label class="input-group-addon" for="username"><i class="fa fa-user"></i></label>
-			<form:input readonly="true" id="username" name="username" path="username" type="text" placeholder="korisničko ime" class="form-control" 
-			 value="${logged}" /><br>
+			<form:input readonly="true" id="username" name="username" path="username" type="text" placeholder="korisničko ime" class="form-control" /><br>
 		</div> 
 		
 		<div class="input-group">

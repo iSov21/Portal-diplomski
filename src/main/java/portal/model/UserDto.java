@@ -1,22 +1,18 @@
 package portal.model;
 
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class UserDto {
     
-	@NotNull
-    @NotEmpty
+	@NotEmpty(message = "Korisničko ime ne može biti prazno")
     private String username;
      
-    @NotNull
-    @NotEmpty
+
+	@NotEmpty(message = "Lozinka ne može biti prazna")
     private String password;
     private String matchingPassword;
      
-    @NotNull
-    @NotEmpty
+    @NotEmpty(message = "Email ne može biti prazan")
     private String email;
 
 	public String getUsername() {

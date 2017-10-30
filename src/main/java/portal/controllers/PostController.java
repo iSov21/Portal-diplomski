@@ -3,6 +3,7 @@ package portal.controllers;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
@@ -61,9 +62,10 @@ public class PostController {
 	
 	
 	@RequestMapping(value="/list", method = RequestMethod.GET)
-	public String list(Model model){
+	public String list(Model model, @RequestParam(required = false) Integer page){
 		List<Post> posts = postService.findAllPosts();
-		model.addAttribute("list", posts );
+		
+		model = makePaginatedList(posts, model, page, 6);
 		return "postList";
 	}
 	
@@ -167,18 +169,18 @@ public class PostController {
 			
 		if(categoryId == null) {
 			List<Post> list = postService.findByCity(city);
-			model = makePaginatedList(list, model, page);		
+			model = makePaginatedList(list, model, page, 3);		
 		}
 		else if(city.equals("") ) {
 			Category category = categoryService.findById(categoryId);
 			Category categoryWithPosts = categoryService.findById(category.getId());
 			List<Post> list = categoryWithPosts.getPosts();
-			model = makePaginatedList( list, model, page);
+			model = makePaginatedList( list, model, page, 3);
 		}
 		else {
 			Category category = categoryService.findById(categoryId);
 			List<Post> list = postService.findByCategoryAndCity(category, city);
-			model = makePaginatedList(list, model, page);
+			model = makePaginatedList(list, model, page, 3);
 		}
 		model.addAttribute("categoryId", categoryId);
 		model.addAttribute("city", city);
@@ -190,7 +192,7 @@ public class PostController {
 	public String searchByUser(String username, Model model, @RequestParam(required = false) Integer page){
 		
 		List<Post> list = postService.findByUsername(username);
-		model = makePaginatedList(list, model, page);
+		model = makePaginatedList(list, model, page, 3);
 		model.addAttribute("username", username);
 		model.addAttribute("userSearch", true);
 		return "searchBlogPostList";
@@ -202,7 +204,7 @@ public class PostController {
 		
 		UserAccount userAccount = userAccountService.findByUsername(authentication.getName());		
 		List<Post> list = postService.findByUsername(userAccount.getUsername());
-		model = makePaginatedList(list, model, new Integer(1));
+		model = makePaginatedList(list, model, new Integer(1), 3);
 		model.addAttribute("filter", true);
 		return "blogPostList";
 	}	
@@ -213,17 +215,17 @@ public class PostController {
 		
 		UserAccount user = userAccountService.findByUsername(authentication.getName());
 		List<Post> list = user.getPosts();		
-		model = makePaginatedList(list, model, new Integer(1));
+		model = makePaginatedList(list, model, new Integer(1), 3);
 		model.addAttribute("filter", true);
 		
 		return "blogPostList";
 	}
 
 	
-	public Model makePaginatedList(List<Post> list, Model model, Integer page){
+	public Model makePaginatedList(List<Post> list, Model model, Integer page, int size){
 		
 		PagedListHolder<Post> pagedListHolder = new PagedListHolder<>(list);
-		pagedListHolder.setPageSize(3);
+		pagedListHolder.setPageSize(size);
 		model.addAttribute("maxPages", pagedListHolder.getPageCount() );
 		
 		if(page==null || page < 1 || page > pagedListHolder.getPageCount()) {
@@ -252,19 +254,27 @@ public class PostController {
 		List<Post> posts;
 		if( filter == null || filter == false ) {
 			posts = postService.findAllPosts();
-			model = makePaginatedList(posts, model, page);
+			model = makePaginatedList(posts, model, page, 3);
 			model.addAttribute("filter", false);
 		}
 		else {
 				UserAccount userAccount = userAccountService.findByUsername(authentication.getName());
 				if( request.isUserInRole("POSLODAVAC") ) {
 					posts = postService.findByUsername(userAccount.getUsername());
-					model = makePaginatedList(posts, model, page);
+					model = makePaginatedList(posts, model, page, 3);
 					model.addAttribute("filter", true);
+					
+					List<Long> ids = new ArrayList<Long>();
+					for( Post post : posts ) {
+						if( post.getSubmited().contains(userAccount) )
+							ids.add(post.getId());
+					}
+					
+					model.addAttribute("idovi", ids);
 				}
 				else { //student
 					posts = postService.findByUsername(userAccount.getUsername());
-					model = makePaginatedList(posts, model, page);
+					model = makePaginatedList(posts, model, page, 6);
 					model.addAttribute("filter", true);
 				}
 			

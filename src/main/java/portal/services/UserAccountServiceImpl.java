@@ -58,17 +58,17 @@ public class UserAccountServiceImpl implements UserAccountService {
 	}
 
 	@Override
-	public UserAccount register(UserDto userDto) {
-		UserAccount userAccount = userAccountRepository.findByEmail(userDto.getEmail());
+	public UserAccount register(UserDto user) {
+		UserAccount userAccount = userAccountRepository.findByEmail(user.getEmail()); //username
 		
 		if(userAccount != null) {
             return null;
         }
 		
 		UserAccount novi = new UserAccount();
-		novi.setUsername(userDto.getUsername());
-		novi.setPassword(passwordEncoder.encode(userDto.getPassword()));
-		novi.setEmail(userDto.getEmail());
+		novi.setUsername(user.getUsername());
+		novi.setPassword(passwordEncoder.encode(user.getPassword()));
+		novi.setEmail(user.getEmail());
 		
 		return userAccountRepository.save(novi);
 	}

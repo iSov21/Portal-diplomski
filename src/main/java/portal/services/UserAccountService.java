@@ -20,7 +20,9 @@ public interface UserAccountService {
 
 	public UserAccount findById(Long id);
 
-	public UserAccount register(UserDto userDto);
+	public void saveUserRole(UserAccount userAccount);
 
-	void saveUserRole(UserAccount userAccount);
+	//public UserAccount register(UserAccount user);
+
+	public UserAccount register(UserDto user);
 }

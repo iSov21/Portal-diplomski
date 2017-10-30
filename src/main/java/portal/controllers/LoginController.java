@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import portal.model.UserAccount;
@@ -16,9 +17,8 @@ import portal.model.UserAccount;
 public class LoginController {
 	
 	@RequestMapping("/login")
-	public String login(Model model){
+	public String login(Model model, @ModelAttribute("msg") String msg){
 		model.addAttribute("UserAccount", new UserAccount());	
-		//else { return "redirect:/list";} //ako je ulogiran odi na list ili nesto
 		return "login";
 	}
 	

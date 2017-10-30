@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import portal.model.UserAccount;
 import portal.model.UserDto;
@@ -29,18 +30,31 @@ public class RegistrationController {
 	}
 	
 	@RequestMapping(value = "/registration", method = RequestMethod.POST)
-	public String registerUserAccount( @ModelAttribute("userDto") @Valid UserDto userDto, 
-			BindingResult result, WebRequest request, Errors errors) {
+	public String registerUserAccount( @Valid @ModelAttribute("userDto") UserDto userDto, BindingResult result, 
+			Model model, Errors error,  RedirectAttributes redirectAttrs) {
 	    
+		if(!userDto.getPassword().equals(userDto.getMatchingPassword())){
+			result.reject("matchingPassword", "ponovljena");
+			error.rejectValue("matchingPassword", "match", "Ponovoljena lozinka ne odgovara upisanoj");
+		}
+		
+		if(result.hasErrors()){	
+			return "registration";
+		}
+		
 	    UserAccount registered = new UserAccount();
-	    if (!result.hasErrors()) {
+	        
+	    if (!result.hasErrors() ) {
 	        registered = createUserAccount(userDto, result);
 	    }
+	   
 	    if (registered == null) {
-	        result.rejectValue("email", "message.regError");
+			error.rejectValue("username", "exist", "Korisničko ime već postoji");
+	    	return "registration";
 	    }
-			
-	    return "home";
+		
+	    redirectAttrs.addAttribute("msg", "Uspješno ste registrirani na portal!" );
+	    return "redirect:/login";
 	}
 	
 	private UserAccount createUserAccount(UserDto userDto, BindingResult result) {
