@@ -43,8 +43,8 @@ public class UserAccountController {
 	
 	@RequestMapping(value= {"","/list"}, method = RequestMethod.GET)
 	public String list(Model model, @RequestParam(required = false) Integer page){
-		List<UserAccount> list = userAccountService.findAllUsers();
 		
+		List<UserAccount> list = userAccountService.findAllUsers();
 		model = makePaginatedList(list, model, page, 6);
 		return "userList";
 	}
@@ -59,19 +59,6 @@ public class UserAccountController {
 	public String addUser(Model model, @Valid @ModelAttribute("UserAccount") UserAccount userAccount, BindingResult result){
 		
 		if(result.hasErrors()){	
-			
-		/*	if(userAccount.getUsername().equals(""))
-				model.addAttribute("errorMsg", "Korisničko ime ne može biti prazno!");
-			
-			else if(userAccountService.findByUsername(userAccount.getUsername())!=null)
-				model.addAttribute("errorMsg", "Korisničko ime se već koristi!");
-			
-			else if(userAccount.getPassword().equals(""))
-				model.addAttribute("errorMsg", "Lozinka ne može biti prazna!");
-			
-			else if(userAccount.getEmail().equals(""))
-				model.addAttribute("errorMsg", "Email ne može biti prazan!");*/
-			
 			return "userAdd";
 		}
 		userAccountService.saveUser(userAccount);
@@ -81,16 +68,16 @@ public class UserAccountController {
 	
 	@RequestMapping(value="/edit", method = RequestMethod.GET)
 	public String edit(@RequestParam("id") Long id, Model model, UserAccount userAccount){
-		model.addAttribute("UserAccount", userAccountService.findById(id) );
+		model.addAttribute("UserAccount", userAccountService.findById(id));
 		return "userEdit";
 	}
 	
 	@RequestMapping(value="/edit", method = RequestMethod.POST)
 	public String editUser(Model model,@Valid @ModelAttribute("UserAccount") UserAccount userAccount, BindingResult result){
+		
 		if(result.hasErrors()){	
 			return "userEdit";
 		}
-		
 		userAccountService.updateUser(userAccount);
 		model.addAttribute("list", userAccountService.findAllUsers());
 		return "userList";
@@ -181,7 +168,7 @@ public class UserAccountController {
 	}
 	
 	@RequestMapping(value="/addRole", method = RequestMethod.POST)
-	public String saveRole(@RequestParam("userId") Long userId, Model model, @ModelAttribute("Role") Role role){
+	public String saveRole(@RequestParam("userId") Long userId, @ModelAttribute("Role") Role role){
 		UserAccount userAccount = userAccountService.findById(userId);
 		userAccount.setRole(roleRepository.findById(role.getId()));
 		userAccountService.saveUserRole(userAccount);
@@ -203,8 +190,7 @@ public class UserAccountController {
             model.addAttribute("list", pagedListHolder.getPageList());
         }
 
-		model.addAttribute("page", page );
-		
+		model.addAttribute("page", page);	
 		return model;
 	}
 }

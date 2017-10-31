@@ -6,7 +6,7 @@
 
 	<div class="center">
 		Dobro došli na stranice portala za studentsku praksu, možete 
-		<a href="${pageContext.request.contextPath}/post/blogPosts">pregledati oglase</a> ili se 
+		<a href="${pageContext.request.contextPath}/post/list">pregledati oglase</a> ili se 
 		<a href="${pageContext.request.contextPath}/registration">registrirati</a> ili se
 		<a href="${pageContext.request.contextPath}/login">prijaviti</a> za daljnu uporabu.
 	</div>

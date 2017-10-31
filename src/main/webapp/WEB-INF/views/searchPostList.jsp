@@ -9,14 +9,10 @@
 	
 
 	<div class="generic-container">
-		<security:authorize access="hasRole('ROLE_POSLODAVAC')">
-			<div><a class="btn btn-default" href="<c:url value='/post/add' />">Novi post</a></div>
-	 	</security:authorize>
-
 		<c:choose>
 			<c:when test="${empty list}">
 				<div class="container">
-					<div class="panel-title"><span class="lead">Trenutno nema ponuđenih oglasa</span></div>
+					<div class="panel-title"><span class="lead">Trenutno nema takvih oglasa</span></div>
 				</div>
 			</c:when>
 			
@@ -32,28 +28,20 @@
 					<p><a href="${pageContext.request.contextPath}/post/showPost?id=${post.id}">Read more</a></p>
 					<i class="fa fa-user"></i> by <a href="${pageContext.request.contextPath}/user/showEmployerDetails?username=${post.username}">${post.username}</a> 
 				 	| <i class="fa fa-tags"></i> ${post.category.name}
-					| <i class="fa fa-map-marker"></i><a href="#"> ${post.city}</a>
+					| <i class="fa fa-map-marker"></i> ${post.city}
 					| <i class="fa fa-calendar-o"></i><fmt:formatDate value="${post.created}" pattern="dd/MM/yyyy"/>
 				</div>
 				</c:forEach>
 				
 			<nav>		
 				<ul class="pagination pagination-circle justify-content-center pg-teal">
-				<c:choose>	
-					<c:when test="${cSearch}">
-						<c:url value="/post/searchByCategoryAndCity" var="prev">
-							<c:param name="page" value="${page-1}"/>
-							<c:param name="categoryId" value="${categoryId}"/>
-							<c:param name="city" value="${city}"/>
-						</c:url>
-					</c:when>
-					<c:otherwise>
-	        			<c:url value="/post/searchByUser" var="prev">
-							<c:param name="page" value="${page-1}"/>
-							<c:param name="username" value="${username}"/>
-						</c:url>
-	   				</c:otherwise>
-				</c:choose>
+					<c:url value="/post/searchByAll" var="prev">
+						<c:param name="page" value="${page-1}"/>
+						<c:param name="categoryId" value="${categoryId}"/>
+						<c:param name="city" value="${city}"/>
+						<c:param name="username" value="${username}"/>
+					</c:url>
+							
 					<c:choose>
 						<c:when test="${page > 1}">
 							<li class="page-item"><a class="page-link" href="<c:out value="${prev}" />">«</a></li>
@@ -69,43 +57,24 @@
 								<li class="page-item active"><span class="page-link">${i.index}</span></li>
 							</c:when>
 							<c:otherwise>
-								<c:choose>	
-									<c:when test="${cSearch}">
-										<c:url value="/post/searchByCategoryAndCity" var="url">
-											<c:param name="page" value="${i.index}"/>
-											<c:param name="categoryId" value="${categoryId}"/>
-											<c:param name="city" value="${city}"/>
-										</c:url>
-									</c:when>
-									<c:otherwise>
-					        			<c:url value="/post/searchByUser" var="url">
-							   				<c:param name="page" value="${i.index}"/>
-							   				<c:param name="username" value="${username}"/>
-							         	</c:url>
-					   				</c:otherwise>
-								</c:choose>
-							
+								<c:url value="/post/searchByAll" var="url">
+									<c:param name="page" value="${i.index}"/>
+									<c:param name="categoryId" value="${categoryId}"/>
+									<c:param name="city" value="${city}"/>
+									<c:param name="username" value="${username}"/>
+								</c:url>
 					     		<li class="page-item"><a class="page-link" href='<c:out value="${url}" />'>${i.index}</a></li>
 					  		</c:otherwise>
 						</c:choose>
 			   		</c:forEach>
 			    			
-					<c:choose>	
-						<c:when test="${cSearch}">
-							<c:url value="/post/searchByCategoryAndCity" var="next">
-								<c:param name="page" value="${page+1}"/>
-								<c:param name="categoryId" value="${categoryId}"/>
-								<c:param name="city" value="${city}"/>
-							</c:url>
-						</c:when>
-						<c:otherwise>
-		        			<c:url value="/post/searchByUser" var="next">
-								<c:param name="page" value="${page+1}"/>
-								<c:param name="username" value="${username}"/>
-							</c:url>
-		   				</c:otherwise>
-					</c:choose>
-					
+					<c:url value="/post/searchByAll" var="next">
+						<c:param name="page" value="${page+1}"/>
+						<c:param name="categoryId" value="${categoryId}"/>
+						<c:param name="city" value="${city}"/>
+						<c:param name="username" value="${username}"/>
+					</c:url>
+
 					<c:choose>
 						<c:when test="${page + 1 <= maxPages}">
 							<li class="page-item"><a class="page-link" href='<c:out value="${next}" />'>»</a></li>

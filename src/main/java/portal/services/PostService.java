@@ -21,11 +21,17 @@ public interface PostService {
 
 	public List<Post> findByCategoryAndCity(Category category, String city);
 
-	public List<Post> findByCategoryOrCity(Category category, String city);
+	//public List<Post> findByCategoryOrCity(Category category, String city);
+	
+	public List<Post> findByCategoryAndCityAndUsername(Category category, String city, String username);
 
 	public List<Post> findByUsername(String username);
 
 	public void addSubmited(Post post);
+
+	public List<Post> findByCategoryAndUsername(Category category, String username);
+
+	public List<Post> findByCityAndUsername(String city, String username);
 
 	
 }

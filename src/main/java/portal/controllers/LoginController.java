@@ -23,13 +23,12 @@ public class LoginController {
 	}
 	
 	@RequestMapping("/logout")
-	public String logout(Model model, HttpServletRequest request, HttpServletResponse response){
+	public String logout(HttpServletRequest request, HttpServletResponse response){
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth != null) {
 			new SecurityContextLogoutHandler().logout(request, response, auth);
 		}
-		model.addAttribute("msg", "Uspješno odlogirani");
 		return "logout";
 	}
 

@@ -30,11 +30,11 @@ public class RegistrationController {
 	}
 	
 	@RequestMapping(value = "/registration", method = RequestMethod.POST)
-	public String registerUserAccount( @Valid @ModelAttribute("userDto") UserDto userDto, BindingResult result, 
+	public String registerUserAccount(@Valid @ModelAttribute("userDto") UserDto userDto, BindingResult result, 
 			Model model, Errors error,  RedirectAttributes redirectAttrs) {
 	    
 		if(!userDto.getPassword().equals(userDto.getMatchingPassword())){
-			result.reject("matchingPassword", "ponovljena");
+			result.reject("matchingPassword");
 			error.rejectValue("matchingPassword", "match", "Ponovoljena lozinka ne odgovara upisanoj");
 		}
 		
@@ -45,7 +45,7 @@ public class RegistrationController {
 	    UserAccount registered = new UserAccount();
 	        
 	    if (!result.hasErrors() ) {
-	        registered = createUserAccount(userDto, result);
+	        registered = userAccountService.register(userDto);
 	    }
 	   
 	    if (registered == null) {
@@ -55,11 +55,5 @@ public class RegistrationController {
 		
 	    redirectAttrs.addAttribute("msg", "Uspješno ste registrirani na portal!" );
 	    return "redirect:/login";
-	}
-	
-	private UserAccount createUserAccount(UserDto userDto, BindingResult result) {
-	    UserAccount registered = null;
-	    registered = userAccountService.register(userDto);  
-	    return registered;
 	}
 }

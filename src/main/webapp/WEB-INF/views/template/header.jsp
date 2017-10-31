@@ -35,12 +35,12 @@
 	<nav class="navbar navbar-fixed-top rgba-teal-slight" >
 <!-- 	<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-pink scrolling-navbar"> -->
 		<a class="navbar-brand" href="${pageContext.request.contextPath}/">Home <span class="sr-only">(current)</span></a>
-		<a class="navbar-brand" href="${pageContext.request.contextPath}/post/blogPosts">Oglasi</a>
+		<a class="navbar-brand" href="${pageContext.request.contextPath}/post/list">Oglasi</a>
 		<a class="navbar-brand" href="${pageContext.request.contextPath}/post/search">Pretraži oglase</a>
 		
 		<security:authorize access="hasRole('ROLE_ADMIN')">
 			<a class="navbar-brand" href="${pageContext.request.contextPath}/user/list">Administracija korisnika</a>		
-			<a class="navbar-brand" href="${pageContext.request.contextPath}/post/list">Administracija oglasa</a>
+			<a class="navbar-brand" href="${pageContext.request.contextPath}/post/listAdmin">Administracija oglasa</a>
 		</security:authorize>
 		
 		
@@ -52,6 +52,7 @@
 		<security:authorize access="hasRole('ROLE_POSLODAVAC')">
 			<a class="navbar-brand" href="${pageContext.request.contextPath}/post/postsByUser">Moji oglasi</a>
 			<a class="navbar-brand" href="${pageContext.request.contextPath}/user/employerDetails">Detalji</a>
+			<a class="navbar-brand" href="${pageContext.request.contextPath}/post/add">Napravi novi oglas</a>
 		</security:authorize>
 		
 		<security:authorize access="!isAuthenticated()">

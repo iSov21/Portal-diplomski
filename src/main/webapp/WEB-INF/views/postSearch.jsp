@@ -6,8 +6,8 @@
 	<h1>Pretraživanje oglasa</h1>
  	
  	<div class="container login-container">
-	<form id="searchForm" method="get" action="searchByCategoryAndCity" class="form">
-		
+	
+	<form id="searchForm" method="get" action="searchByAll" class="form">	
 		<label>Pretraži po kategoriji i gradu:</label>
 		
 		<div class="input-group">
@@ -24,18 +24,10 @@
 			<input id="city" name="city" type="text" placeholder="Grad" class="form-control"/><br>	
  		</div>	
  		
-		<div class="form-actions">
-			<input type="submit" value="Pretraži" class="btn btn-block btn-primary btn-default" />
-			
-		</div>
-	</form>
- 	</div>
- 	
- 	<div class="container login-container">
-	<form id="searchForm" method="get" action="searchByUser" class="form">
-		
-		<label>Pretraži po korisniku:</label>	
  		
+ 		<br/>
+ 		<label>Pretraži po poslodavcu:</label>	
+ 	
  		<div class="input-group">
 			<input id="username" name="username" type="text" placeholder="Korisničko ime" class="form-control"/><br>	
  		</div>	
@@ -46,5 +38,6 @@
 		</div>
 	</form>
  	</div>
+ 	
 
 <%@ include file="/WEB-INF/views/template/footer.jsp"%>

@@ -57,10 +57,10 @@ public class PostServiceImpl implements PostService {
 		return postRepository.findByCategoryAndCity(category, city);
 	}
 
-	@Override
+/*	@Override
 	public List<Post> findByCategoryOrCity(Category category, String city) {
 		return postRepository.findByCategoryOrCity(category, city);
-	}
+	}*/
 
 	@Override
 	public List<Post> findByUsername(String username) {
@@ -71,6 +71,21 @@ public class PostServiceImpl implements PostService {
 	public void addSubmited(Post post) {
 		postRepository.save(post);
 		
+	}
+
+	@Override
+	public List<Post> findByCategoryAndCityAndUsername(Category category, String city, String username) {
+		return postRepository.findByCategoryAndCityAndUsername(category, city, username);
+	}
+
+	@Override
+	public List<Post> findByCategoryAndUsername(Category category, String username) {
+		return postRepository.findByCategoryAndUsername(category, username);
+	}
+
+	@Override
+	public List<Post> findByCityAndUsername(String city, String username) {
+		return postRepository.findByCityAndUsername(city, username);
 	}
 	
 

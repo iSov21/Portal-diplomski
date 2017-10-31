@@ -17,7 +17,7 @@
 			<h4><strong>${post.title}</strong></h4>
 			<p><i class="fa fa-user"></i> by <a href="${pageContext.request.contextPath}/user/showEmployerDetails?username=${post.username}">${post.username}</a> 
 		 	| <i class="fa fa-tags"></i> ${post.category.name}
-			| <i class="fa fa-map-marker"></i><a href="#">${post.city}</a>
+			| <i class="fa fa-map-marker"></i> ${post.city}
 			| <i class="fa fa-calendar-o"></i><fmt:formatDate value="${post.created}" pattern="dd/MM/yyyy"/></p>
 			<div class="row" style="margin-left: 6px;">
 				<img alt="img" src="data:image/jpg;charset=utf-8;base64,${post.logo}" width="120" height="100" class="pull-left"/>			  

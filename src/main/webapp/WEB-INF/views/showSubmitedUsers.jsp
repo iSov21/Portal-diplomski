@@ -37,7 +37,7 @@
 				<th>Ime</th>
 				<th>Prezime</th>
 				<th>Kontakt email</th>
-				<th>Link na cv</th>	            
+				<th>Link na životopis</th>	            
 			</tr>
 		</thead>
 		<tbody>
@@ -47,7 +47,7 @@
 				<td><c:out value="${user.firstName} "></c:out></td>
 				<td><c:out value="${user.lastName} "></c:out></td> 
 				<td><c:out value="${user.contactEmail} "></c:out></td>   
-				<td><a class="btn btn-default" href="<c:url value='/post/download?id=${user.userId}' />">Skini file</a></td> 
+				<td><a class="btn btn-default" href="<c:url value='/post/download?id=${user.userId}' />">Skini životopis</a></td> 
 			</tr>                 
 			</c:forEach>
 		</tbody>

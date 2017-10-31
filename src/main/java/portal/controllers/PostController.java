@@ -3,7 +3,6 @@ package portal.controllers;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
@@ -61,12 +60,11 @@ public class PostController {
 	EmployerDetailsService employerDetailsService;
 	
 	
-	@RequestMapping(value="/list", method = RequestMethod.GET)
+	@RequestMapping(value="/listAdmin", method = RequestMethod.GET)
 	public String list(Model model, @RequestParam(required = false) Integer page){
-		List<Post> posts = postService.findAllPosts();
-		
+		List<Post> posts = postService.findAllPosts();		
 		model = makePaginatedList(posts, model, page, 6);
-		return "postList";
+		return "postListAdmin";
 	}
 	
 	@RequestMapping(value="/add", method = RequestMethod.GET)
@@ -74,7 +72,7 @@ public class PostController {
 		
 		UserAccount userAccount = userAccountService.findByUsername(authentication.getName());
 		
-		if(!employerDetailsService.findByUserId(userAccount.getId())){
+		if(!employerDetailsService.findByUserId(userAccount.getId()) && !userAccount.getRole().getName().equals("ADMIN")){
 			redirectAttrs.addAttribute("msg", "Molim ispunite detalje prije objavljivanja posta!" );
 			return "redirect:/user/employerDetails";
 		}
@@ -100,9 +98,9 @@ public class PostController {
 		model.addAttribute("list", postService.findAllPosts());
 		
 		if(request.isUserInRole("ADMIN")) {
-			return "postList";
+			return "postListAdmin";
 		}
-		return "redirect:/post/blogPosts";
+		return "redirect:/post/list";
 	}
 	
 	public String fileToString(MultipartFile file) throws IOException{
@@ -137,12 +135,12 @@ public class PostController {
 		
 		if(request.isUserInRole("ADMIN")) {
 			model.addAttribute("list", postService.findAllPosts());
-			return "postList";
+			return "postListAdmin";
 		}
 
 		model.addAttribute("employerBtn", true );
 		model.addAttribute("post", post );
-		return "showPost";
+		return "postShow";
 	}	
 	
 	@RequestMapping(value="/delete", method = RequestMethod.GET)
@@ -151,9 +149,9 @@ public class PostController {
 		model.addAttribute("list", postService.findAllPosts());
 		
 		if(request.isUserInRole("ADMIN")) {
-			return "postList";
+			return "postListAdmin";
 		}
-		return "redirect:/post/blogPosts";
+		return "redirect:/post/list";
 	}
 	
 	@RequestMapping(value="/search", method = RequestMethod.GET)
@@ -164,49 +162,68 @@ public class PostController {
 		return "postSearch";
 	}
 	
-	@RequestMapping(value="/searchByCategoryAndCity", method = RequestMethod.GET)
-	public String searchByCategoryAndCity(Long categoryId, String city, Model model, @RequestParam(required = false) Integer page){
-			
-		if(categoryId == null) {
-			List<Post> list = postService.findByCity(city);
-			model = makePaginatedList(list, model, page, 3);		
+	@RequestMapping(value="/searchByAll", method = RequestMethod.GET)
+	public String searchByAll(String username, Long categoryId, String city, Model model, 
+			@RequestParam(required = false) Integer page){
+		
+		List<Post> posts;
+		Category category = categoryService.findById(categoryId);
+		
+		//find by city
+		if(categoryId == null && username.equals("")) {
+			posts = postService.findByCity(city);
+			model = makePaginatedList(posts, model, page, 3);		
 		}
-		else if(city.equals("") ) {
-			Category category = categoryService.findById(categoryId);
+		//find by category
+		else if(city.equals("") && username.equals("")) {		
 			Category categoryWithPosts = categoryService.findById(category.getId());
-			List<Post> list = categoryWithPosts.getPosts();
-			model = makePaginatedList( list, model, page, 3);
+			posts = categoryWithPosts.getPosts();
+			model = makePaginatedList(posts, model, page, 3);
 		}
-		else {
-			Category category = categoryService.findById(categoryId);
-			List<Post> list = postService.findByCategoryAndCity(category, city);
-			model = makePaginatedList(list, model, page, 3);
+		//find by username
+		else if(categoryId == null && city.equals("")) {
+			posts = postService.findByUsername(username);
+			model = makePaginatedList(posts, model, page, 3);
 		}
+		//search by category and city
+		else if(username.equals("")) {
+			posts = postService.findByCategoryAndCity(category, city);
+			model = makePaginatedList(posts, model, page, 3);
+		}
+		//find by category and username
+		else if(city.equals("")) {
+			posts = postService.findByCategoryAndUsername(category, username);
+			model = makePaginatedList(posts, model, page, 3);
+		}
+		//find by city and username
+		else if(categoryId == null) {
+			posts = postService.findByCityAndUsername(city, username);
+			model = makePaginatedList(posts, model, page, 3);
+		}
+		//search by all
+		else {	
+			posts = postService.findByCategoryAndCityAndUsername(category, city, username);
+			model = makePaginatedList(posts, model, page, 3);			
+		}
+
+		
+		model.addAttribute("username", username);
 		model.addAttribute("categoryId", categoryId);
 		model.addAttribute("city", city);
-		model.addAttribute("cSearch", true);
-		return "searchBlogPostList";
+		
+		return "searchPostList";
 	}
 	
-	@RequestMapping(value="/searchByUser", method = RequestMethod.GET)
-	public String searchByUser(String username, Model model, @RequestParam(required = false) Integer page){
-		
-		List<Post> list = postService.findByUsername(username);
-		model = makePaginatedList(list, model, page, 3);
-		model.addAttribute("username", username);
-		model.addAttribute("userSearch", true);
-		return "searchBlogPostList";
-	}
 	
 	
 	@RequestMapping(value="/postsByUser", method = RequestMethod.GET)
 	public String postsByUser(Authentication authentication, Model model){
 		
 		UserAccount userAccount = userAccountService.findByUsername(authentication.getName());		
-		List<Post> list = postService.findByUsername(userAccount.getUsername());
-		model = makePaginatedList(list, model, new Integer(1), 3);
+		List<Post> posts = postService.findByUsername(userAccount.getUsername());
+		model = makePaginatedList(posts, model, new Integer(1), 3);
 		model.addAttribute("filter", true);
-		return "blogPostList";
+		return "postList";
 	}	
 	
 	
@@ -214,77 +231,44 @@ public class PostController {
 	public String submitedJobs(Model model, Authentication authentication){
 		
 		UserAccount user = userAccountService.findByUsername(authentication.getName());
-		List<Post> list = user.getPosts();		
-		model = makePaginatedList(list, model, new Integer(1), 3);
+		List<Post> posts = user.getPosts();		
+		model = makePaginatedList(posts, model, new Integer(1), 3);
 		model.addAttribute("filter", true);
 		
-		return "blogPostList";
+		return "postList";
 	}
 
 	
-	public Model makePaginatedList(List<Post> list, Model model, Integer page, int size){
-		
-		PagedListHolder<Post> pagedListHolder = new PagedListHolder<>(list);
-		pagedListHolder.setPageSize(size);
-		model.addAttribute("maxPages", pagedListHolder.getPageCount() );
-		
-		if(page==null || page < 1 || page > pagedListHolder.getPageCount()) {
-			pagedListHolder.setPage(0);
-			model.addAttribute("list", pagedListHolder.getPageList());
-		}
-		else if(page <= pagedListHolder.getPageCount()) {
-            pagedListHolder.setPage(page-1);
-            model.addAttribute("list", pagedListHolder.getPageList());
-        }
-		
-		//kratki tekst za prikaz
-		for(Post post : pagedListHolder.getPageList()) {
-			post.setText(post.getText().substring(0, 10)+"...");
-		}
-		model.addAttribute("page", page );
-		
-		return model;
-	}
-	
-
-	
-	@RequestMapping(value= "/blogPosts", method = RequestMethod.GET)
+	@RequestMapping(value= {"","/list"}, method = RequestMethod.GET)
 	public String listPosts(Model model, @RequestParam(required = false) Integer page, 
 			@RequestParam(required = false) Boolean filter, Authentication authentication, HttpServletRequest request ){
+		
 		List<Post> posts;
+		
 		if( filter == null || filter == false ) {
 			posts = postService.findAllPosts();
 			model = makePaginatedList(posts, model, page, 3);
 			model.addAttribute("filter", false);
 		}
 		else {
-				UserAccount userAccount = userAccountService.findByUsername(authentication.getName());
-				if( request.isUserInRole("POSLODAVAC") ) {
-					posts = postService.findByUsername(userAccount.getUsername());
-					model = makePaginatedList(posts, model, page, 3);
-					model.addAttribute("filter", true);
-					
-					List<Long> ids = new ArrayList<Long>();
-					for( Post post : posts ) {
-						if( post.getSubmited().contains(userAccount) )
-							ids.add(post.getId());
-					}
-					
-					model.addAttribute("idovi", ids);
-				}
-				else { //student
-					posts = postService.findByUsername(userAccount.getUsername());
-					model = makePaginatedList(posts, model, page, 6);
-					model.addAttribute("filter", true);
-				}
+			UserAccount userAccount = userAccountService.findByUsername(authentication.getName());
+			if( request.isUserInRole("POSLODAVAC") ) {
+				posts = postService.findByUsername(userAccount.getUsername());
+				model = makePaginatedList(posts, model, page, 3);
+				model.addAttribute("filter", true);				
+			}
+			else { //student
+				posts = userAccount.getPosts();	
+				model = makePaginatedList(posts, model, page, 3);
+				model.addAttribute("filter", true);
+			}
 			
 		}				
-		return "blogPostList";
+		return "postList";
 	}
 	
 	@RequestMapping(value= "/showPost", method = RequestMethod.GET)
-	public String showPost(@RequestParam("id") Long id, Model model, Authentication authentication) 
-			throws UnsupportedEncodingException{
+	public String showPost(@RequestParam("id") Long id, Model model, Authentication authentication){
 		
 		Post post = postService.findById(id);
 		UserAccount userAccount;
@@ -299,7 +283,7 @@ public class PostController {
 		}
 		
 		model.addAttribute("post", post );
-		return "showPost";
+		return "postShow";
 	}
 	
 	@RequestMapping(value= "/submit", method = RequestMethod.GET)
@@ -323,10 +307,8 @@ public class PostController {
 		
 		model.addAttribute("post", post );
 		model.addAttribute("submited", true );
-		
-		Set<UserAccount> userList = post.getSubmited();
-		model.addAttribute("userList", userList );
-		return "showPost";
+
+		return "postShow";
 	}
 	
 	
@@ -338,7 +320,6 @@ public class PostController {
 		
 		OutputStream out = response.getOutputStream();
 	    response.setHeader("Content-Disposition", "download");
-	    //response.setContentType("image/png");
 	    response.setContentType("application/pdf");
 	    FileCopyUtils.copy(studentDetails.getCv(), out);
 	    out.flush();
@@ -364,6 +345,30 @@ public class PostController {
 		model.addAttribute("detailsList", details );
 		
 		return "showSubmitedUsers";
+	}
+	
+	public Model makePaginatedList(List<Post> list, Model model, Integer page, int size){
+		
+		PagedListHolder<Post> pagedListHolder = new PagedListHolder<>(list);
+		pagedListHolder.setPageSize(size);
+		model.addAttribute("maxPages", pagedListHolder.getPageCount() );
+		
+		if(page==null || page < 1 || page > pagedListHolder.getPageCount()) {
+			pagedListHolder.setPage(0);
+			model.addAttribute("list", pagedListHolder.getPageList());
+		}
+		else if(page <= pagedListHolder.getPageCount()) {
+            pagedListHolder.setPage(page-1);
+            model.addAttribute("list", pagedListHolder.getPageList());
+        }
+		
+		//kratki tekst za prikaz
+		for(Post post : pagedListHolder.getPageList()) {
+			post.setText(post.getText().substring(0, 10)+"...");
+		}
+		model.addAttribute("page", page );
+		
+		return model;
 	}
 	
 }
