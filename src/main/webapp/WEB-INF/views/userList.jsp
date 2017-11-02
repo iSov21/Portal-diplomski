@@ -10,7 +10,7 @@
      		<a class="btn btn-default" href="<c:url value='/user/add' />">Dodaj novog korisnika</a>
      		<a id="editBtn" class="btn btn-default disabled" href="<c:url value='/user/edit' />">Uredi odabranog korisnika</a>
      		<a id="deleteBtn" class="btn btn-default disabled" onClick="return confirm('Sigurno želite izbrisati korisnika?')" href="<c:url value='/user/delete'/>">Obriši odabranog korisnika</a> 		
-    		<a id="roleBtn" class="btn btn-default disabled" href="<c:url value='/user/addRola' />">Dodaj rolu</a>	
+    		<a id="roleBtn" class="btn btn-default disabled" href="<c:url value='/user/addRola' />">Dodaj ulogu korisniku</a>	
     	</div>
 	<div class="panel-title"><span class="lead">Lista korisnika</span></div>
 	<table class="table table-hover table-bordered table-sm" id="userTable">

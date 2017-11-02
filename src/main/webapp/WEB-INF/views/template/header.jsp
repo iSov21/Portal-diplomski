@@ -12,7 +12,8 @@
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>Portal</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Portal za studentsku praksu</title>
 	
 	<!-- Bootstrap core CSS -->
     <link href="<c:url value="/resources/css/bootstrap.min.css" />" type="text/css" rel="stylesheet">
@@ -32,41 +33,57 @@
 <body>
 
 <header>
-	<nav class="navbar navbar-fixed-top rgba-teal-slight" >
-<!-- 	<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-pink scrolling-navbar"> -->
-		<a class="navbar-brand" href="${pageContext.request.contextPath}/">Home <span class="sr-only">(current)</span></a>
-		<a class="navbar-brand" href="${pageContext.request.contextPath}/post/list">Oglasi</a>
-		<a class="navbar-brand" href="${pageContext.request.contextPath}/post/search">Pretraži oglase</a>
+	<nav class="navbar navbar-default rgba-teal-slight">
+	
+	 	<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+		              <span class="sr-only">Toggle navigation</span>
+		              <span class="icon-bar"></span>
+		              <span class="icon-bar"></span>
+		              <span class="icon-bar"></span>
+		     </button>
+		     <a class="navbar-brand" href="${pageContext.request.contextPath}/">Portal za studentsku praksu</a>
+	     </div>
+	
+		<div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="height: 1px;">
 		
-		<security:authorize access="hasRole('ROLE_ADMIN')">
-			<a class="navbar-brand" href="${pageContext.request.contextPath}/user/list">Administracija korisnika</a>		
-			<a class="navbar-brand" href="${pageContext.request.contextPath}/post/listAdmin">Administracija oglasa</a>
-		</security:authorize>
-		
-		
-		<security:authorize access="hasRole('ROLE_STUDENT')">
-			<a class="navbar-brand" href="${pageContext.request.contextPath}/post/submitedJobs">Moje prijave</a>
-			<a class="navbar-brand" href="${pageContext.request.contextPath}/user/studentDetails">Detalji</a>
-		</security:authorize>
-		
-		<security:authorize access="hasRole('ROLE_POSLODAVAC')">
-			<a class="navbar-brand" href="${pageContext.request.contextPath}/post/postsByUser">Moji oglasi</a>
-			<a class="navbar-brand" href="${pageContext.request.contextPath}/user/employerDetails">Detalji</a>
-			<a class="navbar-brand" href="${pageContext.request.contextPath}/post/add">Napravi novi oglas</a>
-		</security:authorize>
-		
-		<security:authorize access="!isAuthenticated()">
-			<a class="navbar-brand" href="${pageContext.request.contextPath}/registration">Registracija</a>
-		</security:authorize>
-		<div class="pull-right">
-			<security:authorize access="!isAuthenticated()">
-				<a class="navbar-brand" href="${pageContext.request.contextPath}/login">Prijava</a>
-			</security:authorize>
-			<security:authorize access="isAuthenticated()"> 
-				<div class="navbar-brand"> Bok <security:authentication var="logged" property="principal.username" />${logged}! </div>
-				<a class="navbar-brand" href="${pageContext.request.contextPath}/logout">Odjava</a>
-			</security:authorize>
-		</div>
+			<ul class="nav navbar-nav">
+				<li><a href="${pageContext.request.contextPath}/post/list">Oglasi</a></li>
+				<li><a href="${pageContext.request.contextPath}/post/search">Pretraži oglase</a></li>
+				
+				<security:authorize access="hasRole('ROLE_ADMIN')">
+					<li><a href="${pageContext.request.contextPath}/user/list">Administracija korisnika</a></li>	
+					<li><a href="${pageContext.request.contextPath}/post/listAdmin">Administracija oglasa</a></li>
+				</security:authorize>
+				
+				
+				<security:authorize access="hasRole('ROLE_STUDENT')">
+					<li><a href="${pageContext.request.contextPath}/post/submitedJobs">Moje prijave</a></li>
+					<li><a href="${pageContext.request.contextPath}/user/studentDetails">Detalji</a></li>
+				</security:authorize>
+				
+				<security:authorize access="hasRole('ROLE_POSLODAVAC')">
+					<li><a href="${pageContext.request.contextPath}/post/postsByUser">Moji oglasi</a></li>
+					<li><a href="${pageContext.request.contextPath}/user/employerDetails">Detalji</a></li>
+					<li><a href="${pageContext.request.contextPath}/post/add">Napravi novi oglas</a></li>
+				</security:authorize>
+			</ul>
+			
+			
+			<ul class="nav navbar-nav navbar-right">
+				<security:authorize access="!isAuthenticated()">
+					<li><a href="${pageContext.request.contextPath}/registration">Registracija</a></li>
+				</security:authorize>
+				<security:authorize access="!isAuthenticated()">
+					<li><a href="${pageContext.request.contextPath}/login">Prijava</a></li>
+				</security:authorize>
+				<security:authorize access="isAuthenticated()"> 
+					<li><div class="hello">Bok <security:authentication var="logged" property="principal.username" />${logged}!</div> </li>
+					<li><a href="${pageContext.request.contextPath}/logout">Odjava</a></li>
+				</security:authorize>
+			</ul>
+		</div> 
+
 	</nav>
 </header>
 

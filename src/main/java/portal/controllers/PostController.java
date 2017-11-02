@@ -347,6 +347,7 @@ public class PostController {
 		return "showSubmitedUsers";
 	}
 	
+	
 	public Model makePaginatedList(List<Post> list, Model model, Integer page, int size){
 		
 		PagedListHolder<Post> pagedListHolder = new PagedListHolder<>(list);

@@ -17,13 +17,13 @@
 			</c:when>
 			
 			<c:otherwise>
+				
 			<div class="container">
 			<div class="panel-title"><span class="lead">Lista postova</span></div>
 				<c:forEach items="${list}" var="post">
+							
 				<div class="well">
 					<p style="display:none;"><c:out value="${post.id} "></c:out></p> 
-					
-					<%-- <img class="pull-right" src="<c:url value="/resources/green-check.png"/>" width="40" height="40"> --%>
 					
 					<img alt="img" src="data:image/jpg;charset=utf-8;base64,${post.logo}" width="140" height="120" class="pull-left"/>
 					<h4><strong>${post.title}</strong></h4>     
