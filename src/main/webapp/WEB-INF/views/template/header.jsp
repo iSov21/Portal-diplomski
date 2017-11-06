@@ -73,16 +73,18 @@
 			<ul class="nav navbar-nav navbar-right">
 				<security:authorize access="!isAuthenticated()">
 					<li><a href="${pageContext.request.contextPath}/registration">Registracija</a></li>
-				</security:authorize>
-				<security:authorize access="!isAuthenticated()">
 					<li><a href="${pageContext.request.contextPath}/login">Prijava</a></li>
 				</security:authorize>
 				<security:authorize access="isAuthenticated()"> 
-					<li><div class="hello">Bok <security:authentication var="logged" property="principal.username" />${logged}!</div> </li>
-					<li><a href="${pageContext.request.contextPath}/logout">Odjava</a></li>
+						<li><div class="hello"><span class="fa fa-user icon-size"></span>
+						Bok <security:authentication var="logged" property="principal.username" />${logged}!</div></li>
+						<li><a href="${pageContext.request.contextPath}/logout">Odjava</a></li>
 				</security:authorize>
 			</ul>
+			
+
 		</div> 
+
 
 	</nav>
 </header>

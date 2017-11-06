@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import portal.model.Category;
 import portal.model.Post;
 import portal.repositories.PostRepository;
 
@@ -47,20 +46,6 @@ public class PostServiceImpl implements PostService {
 		return postRepository.findById(id);
 	}
 
-	@Override
-	public List<Post> findByCity(String city) {
-		return postRepository.findByCity(city);
-	}
-
-	@Override
-	public List<Post> findByCategoryAndCity(Category category, String city) {
-		return postRepository.findByCategoryAndCity(category, city);
-	}
-
-/*	@Override
-	public List<Post> findByCategoryOrCity(Category category, String city) {
-		return postRepository.findByCategoryOrCity(category, city);
-	}*/
 
 	@Override
 	public List<Post> findByUsername(String username) {
@@ -74,18 +59,8 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<Post> findByCategoryAndCityAndUsername(Category category, String city, String username) {
-		return postRepository.findByCategoryAndCityAndUsername(category, city, username);
-	}
-
-	@Override
-	public List<Post> findByCategoryAndUsername(Category category, String username) {
-		return postRepository.findByCategoryAndUsername(category, username);
-	}
-
-	@Override
-	public List<Post> findByCityAndUsername(String city, String username) {
-		return postRepository.findByCityAndUsername(city, username);
+	public List<Post> getPostsBySearch(String username, Long categoryId, String city) {
+		return postRepository.getPostsBySearch(username, categoryId, city);
 	}
 	
 

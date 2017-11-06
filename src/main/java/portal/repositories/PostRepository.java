@@ -9,7 +9,7 @@ import portal.model.Category;
 import portal.model.Post;
 
 @Repository
-public interface PostRepository extends JpaRepository<Post, Long> {
+public interface PostRepository extends JpaRepository<Post, Long>, PostRepositoryCustom {
 
 	Post findById(Long id);
 

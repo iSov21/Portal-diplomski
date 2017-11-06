@@ -166,46 +166,8 @@ public class PostController {
 	public String searchByAll(String username, Long categoryId, String city, Model model, 
 			@RequestParam(required = false) Integer page){
 		
-		List<Post> posts;
-		Category category = categoryService.findById(categoryId);
-		
-		//find by city
-		if(categoryId == null && username.equals("")) {
-			posts = postService.findByCity(city);
-			model = makePaginatedList(posts, model, page, 3);		
-		}
-		//find by category
-		else if(city.equals("") && username.equals("")) {		
-			Category categoryWithPosts = categoryService.findById(category.getId());
-			posts = categoryWithPosts.getPosts();
-			model = makePaginatedList(posts, model, page, 3);
-		}
-		//find by username
-		else if(categoryId == null && city.equals("")) {
-			posts = postService.findByUsername(username);
-			model = makePaginatedList(posts, model, page, 3);
-		}
-		//search by category and city
-		else if(username.equals("")) {
-			posts = postService.findByCategoryAndCity(category, city);
-			model = makePaginatedList(posts, model, page, 3);
-		}
-		//find by category and username
-		else if(city.equals("")) {
-			posts = postService.findByCategoryAndUsername(category, username);
-			model = makePaginatedList(posts, model, page, 3);
-		}
-		//find by city and username
-		else if(categoryId == null) {
-			posts = postService.findByCityAndUsername(city, username);
-			model = makePaginatedList(posts, model, page, 3);
-		}
-		//search by all
-		else {	
-			posts = postService.findByCategoryAndCityAndUsername(category, city, username);
-			model = makePaginatedList(posts, model, page, 3);			
-		}
-
+		List<Post> posts = postService.getPostsBySearch(username, categoryId, city);		
+		model = makePaginatedList(posts, model, page, 3);
 		
 		model.addAttribute("username", username);
 		model.addAttribute("categoryId", categoryId);
