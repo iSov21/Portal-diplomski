@@ -33,8 +33,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		.and()
 		.authorizeRequests()
 			.antMatchers("/resources/**").permitAll()
-			.antMatchers("/admin/**").hasRole("ADMIN")
+			.antMatchers("/admin/**", "/post/listAdmin","/user/addRole", "/user/add", "/user/edit", "/user/delete").hasRole("ADMIN")
+			.antMatchers("/post/add", "/post/edit", "/post/delete").hasAnyRole("POSLODAVAC", "ADMIN")
+			.antMatchers("/postsByUser", "/submitedList", "user/employerDetails").hasRole("POSLODAVAC")
+			.antMatchers("/submitedJobs", "/submit", "/user/studentDetails").hasRole("STUDENT")			
 			.anyRequest().permitAll()
+		.and()
+			.exceptionHandling().accessDeniedPage("/accessDenied.jsp")
 		.and().csrf().disable();
 	}
 	

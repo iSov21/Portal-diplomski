@@ -38,8 +38,7 @@
 		<form:errors path="title" cssClass="error" style="color: #FF0000"/>
 		
 		<div class="input-group">
-			<label class="input-group-addon" for="text"><i class="fa fa-align-center "></i></label> 
-			<form:input id="text" name="text" path="text" type="text" placeholder="tekst"/><br>
+			<form:textarea id="text" name="text" path="text" type="text" placeholder="tekst oglasa" rows="10"/><br>
 		</div>
 		
 		<div class="input-group">
