@@ -92,6 +92,7 @@ public class PostController {
 			return "postAdd";
 		}
 		
+		post.setText(post.getText().replaceAll("\n", "<br/>" ));
 	    post.setLogo(fileToString(logo));   
 	   
 		postService.savePost(post);
@@ -327,7 +328,7 @@ public class PostController {
 		
 		//kratki tekst za prikaz
 		for(Post post : pagedListHolder.getPageList()) {
-			post.setText(post.getText().substring(0, 10)+"...");
+			post.setText(post.getText().substring(0, 50)+"...");
 		}
 		model.addAttribute("page", page );
 		
