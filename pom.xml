@@ -12,7 +12,7 @@
 	<properties> 		
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
  		<springframework.version>4.3.0.RELEASE</springframework.version>
- 		<spring.version>4.3.2.RELEASE</spring.version>
+ 		<spring.version>5.2.5.RELEASE</spring.version>
  		<mysql.connector.version>5.1.9</mysql.connector.version>
  		<org.apache.commons.version>2.0.1</org.apache.commons.version>
 	</properties>
