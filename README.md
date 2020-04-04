@@ -1,2 +1,3 @@
 # My project's README
-Diplomski rad u Java Springu. Portal za studentske poslove, za prijavu poslova od strane poslodavca te javljanje na poslove od strane studenata.
+Diplomski rad. Portal za studentsku praksu je aplikacija napravljena u aplikacijskom okviru Java Spring
+koristeći Spring Tool Suite.
